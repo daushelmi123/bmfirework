@@ -4,10 +4,12 @@ import { ShoppingCart, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
+import { useTheme } from '../context/ThemeContext';
 
 const CartSummaryFooter = () => {
   const { getTotalItems, getTotalPrice } = useCart();
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [showMinimumDialog, setShowMinimumDialog] = useState(false);
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
@@ -40,8 +42,8 @@ const CartSummaryFooter = () => {
         onClick={handleCartClick}
         className={`fixed bottom-0 left-0 right-0 shadow-2xl border-t-4 z-40 cursor-pointer transition-all duration-200 ${
           isMinimumMet 
-            ? 'bg-gradient-to-r from-slate-800 to-slate-700 text-yellow-100 border-yellow-400 hover:from-slate-700 hover:to-slate-600' 
-            : 'bg-gradient-to-r from-red-800 to-red-700 text-red-100 border-red-400 hover:from-red-700 hover:to-red-600'
+            ? `bg-gradient-to-r ${theme.colors.cartColors.above} ${theme.colors.cartColors.text} ${theme.colors.cartColors.border}` 
+            : `bg-gradient-to-r ${theme.colors.cartColors.below} text-red-100 border-red-400`
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 py-4">
@@ -49,10 +51,10 @@ const CartSummaryFooter = () => {
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 ${
                 isMinimumMet 
-                  ? 'bg-yellow-400/20 border-yellow-400/30' 
+                  ? 'bg-primary/20 border-primary/30' 
                   : 'bg-red-400/20 border-red-400/30'
-              }`}>
-                <ShoppingCart className={`h-6 w-6 ${isMinimumMet ? 'text-yellow-400' : 'text-red-400'}`} />
+              }`} style={isMinimumMet ? { backgroundColor: `hsl(${theme.colors.primary} / 0.2)`, borderColor: `hsl(${theme.colors.primary} / 0.3)` } : {}}>
+                <ShoppingCart className={`h-6 w-6 ${isMinimumMet ? '' : 'text-red-400'}`} style={isMinimumMet ? { color: `hsl(${theme.colors.primary})` } : {}} />
               </div>
               <div>
                 <div className={`text-lg font-bold ${isMinimumMet ? 'text-yellow-100' : 'text-red-100'}`}>

@@ -4,9 +4,11 @@ import { Sparkles, Package, FileText, Star, Moon, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useLanguage } from '@/context/LanguageContext';
+import { useTheme } from '@/context/ThemeContext';
 
 const Index = () => {
   const { t } = useLanguage();
+  const { theme } = useTheme();
 
   return (
     <div className="min-h-screen">
