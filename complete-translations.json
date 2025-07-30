@@ -1,0 +1,107 @@
+{
+  "missing_sections": {
+    "permit": {
+      "permit.hero.title": "🏛️ Nak Apply Permit PDRM? Senang Je!",
+      "permit.hero.subtitle": "Step by step guide macam mana nak dapat permit mercun. Ikut je, confirm approve!",
+      "permit.requirements.title": "📋 Requirement Yang Kena Ada",
+      "permit.requirements.step1": "IC & passport size photo",
+      "permit.requirements.step2": "Surat kebenaran MPKB/MB/MP",
+      "permit.requirements.step3": "Plan lokasi celebration",
+      "permit.requirements.step4": "Insurance coverage (kalau perlu)",
+      "permit.process.title": "🚶‍♂️ Process Step By Step",
+      "permit.process.step1": "Pergi balai polis yang terdekat",
+      "permit.process.step2": "Fill borang permohonan",
+      "permit.process.step3": "Submit documents semua",
+      "permit.process.step4": "Bayar fee (biasanya around RM50-100)",
+      "permit.process.step5": "Tunggu approval 3-7 hari",
+      "permit.tips.title": "💡 Pro Tips Dari Kita",
+      "permit.tips.tip1": "Apply awal-awal, jangan last minute",
+      "permit.tips.tip2": "Make sure semua documents lengkap",
+      "permit.tips.tip3": "Beli mercun dari kedai licensed je",
+      "permit.tips.tip4": "Follow safety guidelines ketat-ketat"
+    },
+    
+    "contact": {
+      "contact.hero.title": "💬 Nak Tanya Apa-Apa? WhatsApp Je!",
+      "contact.hero.subtitle": "Customer service kita reply pantas. Soalan pasal mercun, permit, delivery - semua boleh tanya!",
+      "contact.whatsapp.title": "📱 WhatsApp Kita Sekarang",
+      "contact.whatsapp.description": "Fastest way nak contact kita! Reply dalam 5 minit (business hours)",
+      "contact.whatsapp.number": "+60 12-345 6789",
+      "contact.email.title": "📧 Email Kita",
+      "contact.email.description": "Untuk inquiry business atau bulk order",
+      "contact.email.address": "hello@fireworksmalaysia.com",
+      "contact.hours.title": "🕐 Business Hours",
+      "contact.hours.weekdays": "Isnin - Jumaat: 9AM - 6PM",
+      "contact.hours.saturday": "Sabtu: 9AM - 2PM",
+      "contact.hours.sunday": "Ahad: Closed (tapi WhatsApp still active!)",
+      "contact.location.title": "📍 Pickup Location",
+      "contact.location.address": "Klang Valley area (exact location via WhatsApp)"
+    },
+    
+    "cart": {
+      "cart.title": "🛒 Shopping Cart Kau",
+      "cart.empty": "Alamak! Cart kosong. Nak beli mercun dulu?",
+      "cart.empty.button": "🔥 Pergi Shopping",
+      "cart.item.remove": "Buang",
+      "cart.item.quantity": "Kuantiti",
+      "cart.subtotal": "Subtotal",
+      "cart.delivery": "Delivery Fee",
+      "cart.total": "Total Bayar",
+      "cart.checkout": "💳 Checkout Sekarang",
+      "cart.continue": "🛍️ Continue Shopping",
+      "cart.delivery.note": "Free delivery untuk order RM200+!"
+    },
+    
+    "packages": {
+      "packages.hero.title": "📦 Package Celebration Ready-Made!",
+      "packages.hero.subtitle": "Lazy nak pilih satu-satu? Kita dah curate the best combinations untuk celebration kau!",
+      "packages.wedding.title": "💒 Wedding Package Power",
+      "packages.wedding.description": "Package special untuk big day kau! Ada fountain, sparklers, sama big finale blast!",
+      "packages.wedding.price": "Dari RM299",
+      "packages.raya.title": "🌙 Package Berlesen Meriah",
+      "packages.raya.description": "Celebration Hari Berlesen memang kena ada mercun! Package ni complete with traditional favorites.",
+      "packages.raya.price": "Dari RM199",
+      "packages.birthday.title": "🎂 Birthday Bash Package",
+      "packages.birthday.description": "Birthday memang kena celebrate besar-besaran! Kids safe options available.",
+      "packages.birthday.price": "Dari RM149",
+      "packages.newyear.title": "🎊 New Year Countdown",
+      "packages.newyear.description": "Welcome new year with a BANG! Perfect untuk countdown party.",
+      "packages.newyear.price": "Dari RM399",
+      "packages.custom.title": "🎨 Custom Package",
+      "packages.custom.description": "Nak something special? Tell us your budget & requirements, kita buatkan package untuk kau!",
+      "packages.custom.button": "💬 Request Custom Package"
+    },
+    
+    "testimonials": {
+      "testimonials.hero.title": "🌟 Apa Kata Customer Kita?",
+      "testimonials.hero.subtitle": "Real reviews dari real customers. Tengok sendiri kenapa diorang suka gila dengan service kita!",
+      "testimonials.review1.name": "Ahmad from KL",
+      "testimonials.review1.text": "Memang terbaik! Order untuk wedding, delivery on time, mercun power habis. Guests semua happy gila!",
+      "testimonials.review1.rating": "⭐⭐⭐⭐⭐",
+      "testimonials.review2.name": "Siti from JB",
+      "testimonials.review2.text": "First time beli mercun online, was worried. Tapi quality memang top notch, customer service pun baik gila!",
+      "testimonials.review2.rating": "⭐⭐⭐⭐⭐",
+      "testimonials.review3.name": "Robert from Penang",
+      "testimonials.review3.text": "Been buying from them for 3 years. Consistent quality, competitive price. Highly recommended!",
+      "testimonials.review3.rating": "⭐⭐⭐⭐⭐",
+      "testimonials.cta.title": "Nak Jadi Customer Happy Macam Diorang?",
+      "testimonials.cta.button": "🛒 Start Shopping"
+    },
+    
+    "footer": {
+      "footer.description": "Kedai mercun online terbaik Malaysia! Harga murah, quality power, delivery nationwide. Licensed & legal. WhatsApp kita sekarang!",
+      "footer.quickLinks": "Quick Links",
+      "footer.categories": "Kategori Popular",
+      "footer.support": "Customer Support",
+      "footer.whatsapp": "💬 WhatsApp Kita",
+      "footer.email": "📧 Email Kita", 
+      "footer.hours": "🕐 Business Hours",
+      "footer.hours.time": "9AM - 6PM (Isnin-Sabtu)",
+      "footer.legal": "Legal Info",
+      "footer.privacy": "Privacy Policy",
+      "footer.terms": "Terms & Conditions",
+      "footer.license": "Licensed by Malaysian Govt",
+      "footer.copyright": "© 2025 Fireworks Malaysia. All rights reserved."
+    }
+  }
+}

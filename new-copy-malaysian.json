@@ -1,0 +1,105 @@
+{
+  "en": {
+    "nav.home": "Home",
+    "nav.fireworks": "Mercun & Bunga Api",
+    "nav.packages": "Package Berlesen",
+    "nav.permitGuide": "Permit Guide",
+    "nav.safetyGuide": "Safety Tips",
+    "nav.testimonials": "Reviews",
+    "nav.contact": "WhatsApp Kita",
+    
+    "home.hero.title": "🎆 Eh Weh! Nak Mercun Power?",
+    "home.hero.subtitle": "100+ Jenis Bunga Api & Mercun Online - Murah Gila!",
+    "home.hero.description": "Kedai mercun online Malaysia yang paling mantap! Dari bunga api stick RM10 sampai mercun gempak power max. Delivery nationwide, confirm halal & legal!",
+    "home.hero.viewFireworks": "🔥 Tengok Semua Mercun!",
+    
+    "home.section.title": "Habaq Mai, Nak Celebration Macam Mana?",
+    "home.section.description": "Wedding ka, Berlesen ka, birthday ka - kita ada semua! Package lengkap sampai permit guide pun ada. Memang best!",
+    
+    "home.card.fireworks.title": "🎇 All Mercun & Bunga Api",
+    "home.card.fireworks.description": "100+ jenis mercun power! Ada bunga api stick murah RM10, ada mercun gempak sampai RM1000+. Kategori lengkap dari kids-safe sampai yang memang BOOM!",
+    
+    "home.card.packages.title": "📦 Package Celebration Siap",
+    "home.card.packages.description": "Lazy nak pilih satu-satu? Ambik je package! Ada wedding package, raya package, birthday package - semua dah complete set. Senang gila!",
+    
+    "home.card.permit.title": "📄 Guide Permit PDRM",
+    "home.card.permit.description": "Tak tau macam mana nak apply permit? Relax bro! Kita ajar step by step macam mana nak deal dengan PDRM. Free guidance tau!",
+    
+    "home.why.title": "Kenapa Pilih Kita? Sebab Kita Memang Best!",
+    "home.why.licensed": "✅ Licensed Betul",
+    "home.why.licensed.desc": "Kita ada lesen sah dari kerajaan - bukan kedai haram ye! Semua product approved & safe",
+    
+    "home.why.products": "💥 100+ Jenis Power",
+    "home.why.products.desc": "Collection paling banyak kat Malaysia! 8 kategori dari sparkle sampai big blast. Confirm ada yang kau suka!",
+    
+    "home.why.permit": "📋 Tolong Apply Permit",
+    "home.why.permit.desc": "Malas nak deal dengan PDRM? Kita guide sampai dapat permit. WhatsApp je kita!",
+    
+    "home.why.support": "💬 WhatsApp 24/7",
+    "home.why.support.desc": "Ada soalan? WhatsApp terus! Kita reply pantas. Customer service terbaik kat Malaysia!",
+    
+    "products.title": "Semua Mercun & Bunga Api Kat Sini!",
+    "products.description": "Collection lengkap 100+ jenis mercun & bunga api. Harga dari RM10 je! Pilih ikut kategori atau search apa yang kau nak. Semuanya legal & berkualiti!",
+    "products.search.placeholder": "Cari mercun apa nak?",
+    "products.category.all": "Semua",
+    "products.category.merdeka": "🇲🇾 Mercun Merdeka",
+    "products.category.sparkle": "✨ Bunga Api Stick - Kids Suka!",
+    "products.category.kidsFirecrackers": "👶 Mercun Kids Safe",
+    "products.category.poppop": "🎪 Pop-Pop Comel",
+    "products.category.fountainBlast": "⛲ Fountain Power",
+    "products.category.oneshot": "💥 One Shot Big Blast!",
+    "products.category.rocket": "🚀 Rocket Terbang Tinggi",
+    "products.category.reddragon": "🐉 Red Dragon Gempak",
+    "products.noResults": "Alamak! Takde mercun yang match. Cuba search lain pulak.",
+    "products.addToCart": "🛒 Masuk Cart",
+    "products.watchVideo": "📹 Tengok Video",
+    
+    "safety.hero.title": "Jangan Main-Main! Safety First Tau!",
+    "safety.hero.subtitle": "Mercun power tapi kena guna betul-betul. Jangan sampai kena blast sendiri!",
+    "safety.warning.title": "⚠️ Warning Serius Ni!",
+    "safety.warning.description": "Mercun boleh bahaya kalau main hentam kromo je. Ikut rules tau - jangan nak hero sangat!",
+    
+    "safety.tips.title": "Tips Safety Yang Kena Tau",
+    "safety.tip1.title": "👨‍👩‍👧‍👦 Mesti Ada Adult",
+    "safety.tip1.desc": "Budak-budak jangan main sorang-sorang! Mesti ada orang dewasa jaga. Safety first beb!",
+    
+    "safety.tip2.title": "👓 Jaga Mata Tu!",
+    "safety.tip2.desc": "Pakai safety glasses. Mata tu satu je, rosak takleh tukar iPhone. Jaga betul-betul!",
+    
+    "safety.tip3.title": "🏃‍♂️ Orang Jauh Sikit",
+    "safety.tip3.desc": "Suruh orang lain stand jauh 8-10 meter. Jangan nak berkepit-kepit sangat!",
+    
+    "safety.tip4.title": "🚿 Air Ready Standby",
+    "safety.tip4.desc": "Sedia air atau fire extinguisher. Kalau ada emergency, boleh padam cepat-cepat!",
+    
+    "safety.emergency.title": "Emergency? Call Cepat!",
+    "safety.emergency.description": "Kalau ada apa-apa jadi, call emergency terus! Jangan delay!",
+    "safety.emergency.numbers": "Nombor Emergency",
+    "safety.emergency.fire": "🚒 Bomba: 994",
+    "safety.emergency.police": "👮‍♂️ Polis: 999",
+    
+    "footer.description": "Kedai mercun online terbaik Malaysia! Harga murah, quality power, delivery nationwide. WhatsApp kita sekarang!",
+    "footer.quickLinks": "Quick Links",
+    "footer.categories": "Kategori Popular",
+    "footer.support": "Customer Support",
+    "footer.whatsapp": "💬 WhatsApp Kita",
+    "footer.email": "📧 Email Kita",
+    "footer.hours": "🕐 Business Hours",
+    "footer.hours.time": "9AM - 6PM (Isnin-Sabtu)"
+  },
+  
+  "ms": {
+    "nav.home": "Utama",
+    "nav.fireworks": "Mercun & Bunga Api",
+    "nav.packages": "Package Berlesen",
+    "nav.permitGuide": "Guide Permit",
+    "nav.safetyGuide": "Tips Keselamatan",
+    "nav.testimonials": "Reviews",
+    "nav.contact": "WhatsApp Kami",
+    
+    "home.hero.title": "🎆 Nak Mercun Power Tak?",
+    "home.hero.subtitle": "100+ Jenis Mercun & Bunga Api - Murah Memang Best!",
+    "home.hero.description": "Kedai mercun online Malaysia yang paling terer! Dari bunga api murah RM10 sampai mercun power gila. Hantar ke seluruh Malaysia!",
+    "home.hero.viewFireworks": "🔥 Tengok Semua Mercun!"
+  }
+}
