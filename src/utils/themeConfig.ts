@@ -129,29 +129,29 @@ export const themeConfigs: Record<string, ThemeConfig> = {
     }
   },
 
-  // Purple Theme - BM Firework
+  // Brown/Green Theme - BM Firework (Bear Mascot)
   'bmfirework.com': {
-    name: 'Purple BM',
+    name: 'Brown & Green Bear',
     colors: {
-      primary: '262 83% 58%',        // Purple
-      primaryForeground: '210 40% 98%', // White
-      secondary: '220 14% 96%',      // Light Gray
-      secondaryForeground: '262 83% 58%', // Purple
-      accent: '262 83% 58%',         // Purple
-      accentForeground: '210 40% 98%', // White
+      primary: '25 60% 35%',         // Brown (#7D5A3D)
+      primaryForeground: '120 40% 95%', // Light Green
+      secondary: '130 50% 45%',      // Green (#3D9970)
+      secondaryForeground: '25 60% 95%', // Light Brown
+      accent: '130 50% 45%',         // Green
+      accentForeground: '25 60% 95%', // Light Brown
       cartColors: {
-        above: 'from-purple-600 to-purple-700',
-        below: 'from-red-800 to-red-700',
-        border: 'border-purple-400',
-        icon: 'text-purple-400',
-        text: 'text-purple-100'
+        above: 'from-green-600 to-green-700',
+        below: 'from-amber-800 to-amber-700',
+        border: 'border-green-400',
+        icon: 'text-green-400',
+        text: 'text-green-100'
       }
     },
     branding: {
-      title: 'BM Firework',
-      subtitle: 'Mercun & Bunga Api Murah Malaysia',
-      description: 'Harga murah, kualiti terjamin untuk sambutan meriah',
-      positioning: 'affordable quality fireworks'
+      title: 'BMFireworks x BearBoom',
+      subtitle: 'Mercun & Bunga Api Berkualiti Malaysia',
+      description: 'Harga berpatutan, kualiti terjamin untuk sambutan meriah',
+      positioning: 'quality affordable fireworks'
     }
   }
 };

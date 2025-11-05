@@ -5,7 +5,7 @@ import * as React from "react";
 import { createContext, useState, useEffect, useContext, useRef } from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva } from "class-variance-authority";
-import { X, MessageCircle, ChevronRight, Check, Circle, Menu, ChevronDown, Globe, ShoppingCart, Moon, Star, Sparkles, Play, Package, FileText, Factory, MapPin, ShieldCheck, CalendarDays, TrendingUp, ChevronUp, Search, Minus, Plus, Trash2, AlertTriangle, CheckCircle, Shield, Eye, Users, Flame, Quote, Phone, Mail, Clock, PhoneCall, CheckCircle2, Truck } from "lucide-react";
+import { X, MessageCircle, ChevronRight, Check, Circle, Menu, ChevronDown, Globe, ShoppingCart, Moon, Star, Sparkles, Play, Package, FileText, Factory, MapPin, ShieldCheck, CalendarDays, TrendingUp, ChevronUp, Search, Minus, Plus, Trash2, AlertTriangle, CheckCircle, Shield, Eye, Users, Flame, Quote, Phone, Mail, Clock, PhoneCall, CheckCircle2, Truck, ChevronLeft, CalendarIcon, Loader2, Download } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
@@ -15,6 +15,11 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import { DayPicker } from "react-day-picker";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+import { format } from "date-fns";
+import { toast as toast$1 } from "sonner";
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1e6;
 let count = 0;
@@ -1019,35 +1024,35 @@ const themeConfigs = {
       positioning: "professional fireworks supplier"
     }
   },
-  // Purple Theme - BM Firework
+  // Brown/Green Theme - BM Firework (Bear Mascot)
   "bmfirework.com": {
-    name: "Purple BM",
+    name: "Brown & Green Bear",
     colors: {
-      primary: "262 83% 58%",
-      // Purple
-      primaryForeground: "210 40% 98%",
-      // White
-      secondary: "220 14% 96%",
-      // Light Gray
-      secondaryForeground: "262 83% 58%",
-      // Purple
-      accent: "262 83% 58%",
-      // Purple
-      accentForeground: "210 40% 98%",
-      // White
+      primary: "25 60% 35%",
+      // Brown (#7D5A3D)
+      primaryForeground: "120 40% 95%",
+      // Light Green
+      secondary: "130 50% 45%",
+      // Green (#3D9970)
+      secondaryForeground: "25 60% 95%",
+      // Light Brown
+      accent: "130 50% 45%",
+      // Green
+      accentForeground: "25 60% 95%",
+      // Light Brown
       cartColors: {
-        above: "from-purple-600 to-purple-700",
-        below: "from-red-800 to-red-700",
-        border: "border-purple-400",
-        icon: "text-purple-400",
-        text: "text-purple-100"
+        above: "from-green-600 to-green-700",
+        below: "from-amber-800 to-amber-700",
+        border: "border-green-400",
+        icon: "text-green-400",
+        text: "text-green-100"
       }
     },
     branding: {
-      title: "BM Firework",
-      subtitle: "Mercun & Bunga Api Murah Malaysia",
-      description: "Harga murah, kualiti terjamin untuk sambutan meriah",
-      positioning: "affordable quality fireworks"
+      title: "BMFireworks x BearBoom",
+      subtitle: "Mercun & Bunga Api Berkualiti Malaysia",
+      description: "Harga berpatutan, kualiti terjamin untuk sambutan meriah",
+      positioning: "quality affordable fireworks"
     }
   }
 };
@@ -3466,7 +3471,7 @@ const PeakSeasonSection = ({ peakSeasons, copy }) => /* @__PURE__ */ jsxs("secti
     /* @__PURE__ */ jsx("div", { className: "mt-10 text-center text-xs sm:text-sm text-yellow-200/80", children: copy.note })
   ] })
 ] });
-const PriceRequestSection = ({ states, pdfUrl, webhookUrl, copy }) => {
+const PriceRequestSection = ({ states: states2, pdfUrl, webhookUrl, copy }) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", phone: "", state: "" });
   const [errors, setErrors] = useState({});
@@ -3476,7 +3481,7 @@ const PriceRequestSection = ({ states, pdfUrl, webhookUrl, copy }) => {
     setErrors({});
   };
   const redirectToWhatsApp = () => {
-    const stateOption = states.find((item) => item.value === formData.state);
+    const stateOption = states2.find((item) => item.value === formData.state);
     const stateName = (stateOption == null ? void 0 : stateOption.label) ?? formData.state;
     const message = `Hi BMFireworks! Saya ${formData.name.trim()} dari ${stateName}, nak dapatkan katalog terbaru. No telefon: ${formData.phone.trim()}`;
     const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
@@ -3503,7 +3508,7 @@ const PriceRequestSection = ({ states, pdfUrl, webhookUrl, copy }) => {
     if (!validate()) return;
     setIsSubmitting(true);
     setErrors({});
-    const stateOption = states.find((item) => item.value === formData.state);
+    const stateOption = states2.find((item) => item.value === formData.state);
     try {
       if (webhookUrl) {
         await fetch(webhookUrl, {
@@ -3597,7 +3602,7 @@ const PriceRequestSection = ({ states, pdfUrl, webhookUrl, copy }) => {
                   disabled: isSubmitting,
                   children: [
                     /* @__PURE__ */ jsx("option", { value: "", children: copy.statePlaceholder }),
-                    states.map((state) => /* @__PURE__ */ jsx("option", { value: state.value, children: state.label }, state.value))
+                    states2.map((state) => /* @__PURE__ */ jsx("option", { value: state.value, children: state.label }, state.value))
                   ]
                 }
               ),
@@ -8523,6 +8528,582 @@ const Sales = () => {
     ] })
   ] });
 };
+const labelVariants = cva(
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+);
+const Label = React.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
+  LabelPrimitive.Root,
+  {
+    ref,
+    className: cn(labelVariants(), className),
+    ...props
+  }
+));
+Label.displayName = LabelPrimitive.Root.displayName;
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  ...props
+}) {
+  return /* @__PURE__ */ jsx(
+    DayPicker,
+    {
+      showOutsideDays,
+      className: cn("p-3", className),
+      classNames: {
+        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        month: "space-y-4",
+        caption: "flex justify-center pt-1 relative items-center",
+        caption_label: "text-sm font-medium",
+        nav: "space-x-1 flex items-center",
+        nav_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+        ),
+        nav_button_previous: "absolute left-1",
+        nav_button_next: "absolute right-1",
+        table: "w-full border-collapse space-y-1",
+        head_row: "flex",
+        head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+        row: "flex w-full mt-2",
+        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        day: cn(
+          buttonVariants({ variant: "ghost" }),
+          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
+        ),
+        day_range_end: "day-range-end",
+        day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+        day_today: "bg-accent text-accent-foreground",
+        day_outside: "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+        day_disabled: "text-muted-foreground opacity-50",
+        day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        day_hidden: "invisible",
+        ...classNames
+      },
+      components: {
+        IconLeft: ({ ..._props }) => /* @__PURE__ */ jsx(ChevronLeft, { className: "h-4 w-4" }),
+        IconRight: ({ ..._props }) => /* @__PURE__ */ jsx(ChevronRight, { className: "h-4 w-4" })
+      },
+      ...props
+    }
+  );
+}
+Calendar.displayName = "Calendar";
+const Popover = PopoverPrimitive.Root;
+const PopoverTrigger = PopoverPrimitive.Trigger;
+const PopoverContent = React.forwardRef(({ className, align = "center", sideOffset = 4, ...props }, ref) => /* @__PURE__ */ jsx(PopoverPrimitive.Portal, { children: /* @__PURE__ */ jsx(
+  PopoverPrimitive.Content,
+  {
+    ref,
+    align,
+    sideOffset,
+    className: cn(
+      "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      className
+    ),
+    ...props
+  }
+) }));
+PopoverContent.displayName = PopoverPrimitive.Content.displayName;
+const states = [
+  { value: "johor", label: "Johor" },
+  { value: "kedah", label: "Kedah" },
+  { value: "kelantan", label: "Kelantan" },
+  { value: "melaka", label: "Melaka" },
+  { value: "negeri_sembilan", label: "Negeri Sembilan" },
+  { value: "pahang", label: "Pahang" },
+  { value: "penang", label: "Pulau Pinang" },
+  { value: "perak", label: "Perak" },
+  { value: "perlis", label: "Perlis" },
+  { value: "sabah", label: "Sabah" },
+  { value: "sarawak", label: "Sarawak" },
+  { value: "selangor", label: "Selangor" },
+  { value: "terengganu", label: "Terengganu" },
+  { value: "wp_kuala_lumpur", label: "WP Kuala Lumpur" },
+  { value: "wp_labuan", label: "WP Labuan" },
+  { value: "wp_putrajaya", label: "WP Putrajaya" }
+];
+const countryCodes = [
+  { value: "60", label: "+60 (MY)" },
+  { value: "65", label: "+65 (SG)" },
+  { value: "62", label: "+62 (ID)" },
+  { value: "66", label: "+66 (TH)" }
+];
+const applicationTypes = [
+  { value: "deepavali", label: "Deepavali" },
+  { value: "cny", label: "Chinese New Year" },
+  { value: "raya", label: "Hari Raya" },
+  { value: "merdeka", label: "Hari Merdeka" },
+  { value: "wedding", label: "Majlis Kahwin" },
+  { value: "corporate", label: "Acara Korporat" },
+  { value: "other", label: "Lain-lain" }
+];
+const PermitPDRM = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    applicationType: "",
+    fullName: "",
+    icNumber: "",
+    occupation: "",
+    countryCode: "60",
+    phone: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    postcode: "",
+    state: "",
+    companyName: "",
+    companySsm: "",
+    applicationDate: void 0,
+    businessLocation: "",
+    businessAddress1: "",
+    businessAddress2: "",
+    businessState: "",
+    ipdName: ""
+  });
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.applicationType || !formData.fullName || !formData.icNumber || !formData.phone || !formData.companyName || !formData.companySsm || !formData.applicationDate) {
+      toast$1.error("Sila lengkapkan semua medan wajib (*)");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, "")}`;
+      const formattedDate = formData.applicationDate ? format(formData.applicationDate, "dd/MM/yyyy") : "";
+      const payload = {
+        applicationType: formData.applicationType,
+        fullName: formData.fullName,
+        icNumber: formData.icNumber,
+        occupation: formData.occupation,
+        phone: fullPhone,
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        city: formData.city,
+        postcode: formData.postcode,
+        state: formData.state,
+        companyName: formData.companyName,
+        companySsm: formData.companySsm,
+        applicationDate: formattedDate,
+        businessLocation: formData.businessLocation,
+        businessAddress1: formData.businessAddress1,
+        businessAddress2: formData.businessAddress2,
+        businessState: formData.businessState,
+        ipdName: formData.ipdName
+      };
+      const response = await fetch("https://grkfireworks.com:4000/api/generate-permit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-Key": "bmf_prod_x0DqL3kq+iSZc5p6y7kTMYToR5MuVNN/atLNOm+5DKE="
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error("Gagal menjana dokumen permit");
+      }
+      const result = await response.json();
+      if (result.pdfUrl) {
+        window.open(result.pdfUrl, "_blank");
+        toast$1.success("Dokumen permit berjaya dijana!");
+      }
+      setTimeout(() => {
+        var _a;
+        const stateLabel = ((_a = states.find((s) => s.value === formData.state)) == null ? void 0 : _a.label) || formData.state;
+        const message = `Hi BMFireworks! Saya ${formData.fullName} dari ${stateLabel}. Saya dah isi borang permohonan permit untuk ${formData.applicationType}. Boleh bantu proses? No telefon: ${fullPhone}`;
+        const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
+        window.open(waUrl, "_blank");
+      }, 1e3);
+      setFormData({
+        applicationType: "",
+        fullName: "",
+        icNumber: "",
+        occupation: "",
+        countryCode: "60",
+        phone: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        postcode: "",
+        state: "",
+        companyName: "",
+        companySsm: "",
+        applicationDate: void 0,
+        businessLocation: "",
+        businessAddress1: "",
+        businessAddress2: "",
+        businessState: "",
+        ipdName: ""
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast$1.error("Maaf, ada masalah semasa hantar borang. Sila cuba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  return /* @__PURE__ */ jsx("div", { className: "min-h-screen py-16 bg-gradient-to-br from-amber-50 via-green-50 to-amber-50", children: /* @__PURE__ */ jsxs("div", { className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8", children: [
+    /* @__PURE__ */ jsxs("div", { className: "text-center mb-12", children: [
+      /* @__PURE__ */ jsx("span", { className: "inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300", children: "Permohonan Permit Majlis" }),
+      /* @__PURE__ */ jsx("h1", { className: "mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-green-700 to-amber-700 bg-clip-text text-transparent", children: "Satu Borang Untuk Semua Dokumen PDRM" }),
+      /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg text-slate-700 max-w-2xl mx-auto", children: "Isi maklumat perniagaan anda sekali sahaja. Sistem BMFireworks akan auto isi 3-5 dokumen wajib (Surat Lantikan, Borang IPD, Borang PBT) dan simpan dengan selamat." })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "rounded-lg border border-green-300 bg-white shadow-2xl", children: [
+      /* @__PURE__ */ jsx("div", { className: "flex flex-col space-y-1.5 p-6 border-b border-green-200 bg-gradient-to-r from-green-50 to-amber-50", children: /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold text-amber-900", children: "Maklumat Pemohon & Perniagaan" }) }),
+      /* @__PURE__ */ jsx("form", { onSubmit: handleSubmit, className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "space-y-10", children: [
+        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Jenis Permohonan" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pilih jenis permohonan berdasarkan perayaan yang anda mohon." })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsx(Label, { htmlFor: "applicationType", children: "Permohonan Untuk *" }),
+            /* @__PURE__ */ jsxs(
+              Select,
+              {
+                value: formData.applicationType,
+                onValueChange: (value) => handleInputChange("applicationType", value),
+                children: [
+                  /* @__PURE__ */ jsx(SelectTrigger, { id: "applicationType", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih jenis permohonan" }) }),
+                  /* @__PURE__ */ jsx(SelectContent, { children: applicationTypes.map((type) => /* @__PURE__ */ jsx(SelectItem, { value: type.value, children: type.label }, type.value)) })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Sistem akan auto pilih Surat Kebenaran yang bersesuaian dengan perayaan." })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
+        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Pemohon" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pastikan maklumat sama seperti dalam IC untuk elak permohonan ditolak." })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2", children: [
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "fullName", children: "Nama Penuh *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "fullName",
+                  placeholder: "contoh: Ahmad bin Ali",
+                  value: formData.fullName,
+                  onChange: (e) => handleInputChange("fullName", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "icNumber", children: "No. Kad Pengenalan *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "icNumber",
+                  placeholder: "900101-14-1234",
+                  value: formData.icNumber,
+                  onChange: (e) => handleInputChange("icNumber", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "occupation", children: "Pekerjaan *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "occupation",
+                  placeholder: "contoh: Usahawan",
+                  value: formData.occupation,
+                  onChange: (e) => handleInputChange("occupation", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "grid gap-3 md:grid-cols-[140px_minmax(0,1fr)]", children: [
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "countryCode", children: "Kod Negara" }),
+                /* @__PURE__ */ jsxs(
+                  Select,
+                  {
+                    value: formData.countryCode,
+                    onValueChange: (value) => handleInputChange("countryCode", value),
+                    children: [
+                      /* @__PURE__ */ jsx(SelectTrigger, { id: "countryCode", children: /* @__PURE__ */ jsx(SelectValue, {}) }),
+                      /* @__PURE__ */ jsx(SelectContent, { children: countryCodes.map((code) => /* @__PURE__ */ jsx(SelectItem, { value: code.value, children: code.label }, code.value)) })
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "phone", children: "No. Telefon *" }),
+                /* @__PURE__ */ jsx(
+                  Input,
+                  {
+                    id: "phone",
+                    placeholder: "0123456789 (tanpa +60)",
+                    value: formData.phone,
+                    onChange: (e) => handleInputChange("phone", e.target.value)
+                  }
+                ),
+                /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Taip nombor tanpa kod negara. Sistem akan simpan sebagai 60XXXXXXXXX." })
+              ] })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
+        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Alamat Kediaman" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Digunakan untuk tujuan rujukan dan verifikasi PDRM." })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "grid gap-6", children: [
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine1", children: "Alamat Rumah 1 *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "addressLine1",
+                  placeholder: "No 12, Jalan Bunga Api",
+                  value: formData.addressLine1,
+                  onChange: (e) => handleInputChange("addressLine1", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine2", children: "Alamat Rumah 2" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "addressLine2",
+                  placeholder: "Taman Harmoni, Mukim Tebrau",
+                  value: formData.addressLine2,
+                  onChange: (e) => handleInputChange("addressLine2", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-3", children: [
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "city", children: "Bandar *" }),
+                /* @__PURE__ */ jsx(
+                  Input,
+                  {
+                    id: "city",
+                    placeholder: "Johor Bahru",
+                    value: formData.city,
+                    onChange: (e) => handleInputChange("city", e.target.value)
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "postcode", children: "Poskod *" }),
+                /* @__PURE__ */ jsx(
+                  Input,
+                  {
+                    id: "postcode",
+                    placeholder: "81100",
+                    maxLength: 5,
+                    value: formData.postcode,
+                    onChange: (e) => handleInputChange("postcode", e.target.value)
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "state", children: "Negeri *" }),
+                /* @__PURE__ */ jsxs(
+                  Select,
+                  {
+                    value: formData.state,
+                    onValueChange: (value) => handleInputChange("state", value),
+                    children: [
+                      /* @__PURE__ */ jsx(SelectTrigger, { id: "state", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih negeri" }) }),
+                      /* @__PURE__ */ jsx(SelectContent, { children: states.map((state) => /* @__PURE__ */ jsx(SelectItem, { value: state.value, children: state.label }, state.value)) })
+                    ]
+                  }
+                )
+              ] })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
+        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Syarikat" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Maklumat ini digunakan untuk surat lantikan dan dokumen sokongan." })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2", children: [
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "companyName", children: "Nama Syarikat (SSM) *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "companyName",
+                  placeholder: "BMFireworks Enterprise",
+                  value: formData.companyName,
+                  onChange: (e) => handleInputChange("companyName", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "companySsm", children: "No. SSM *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "companySsm",
+                  placeholder: "202401234567",
+                  value: formData.companySsm,
+                  onChange: (e) => handleInputChange("companySsm", e.target.value)
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-w-sm", children: [
+            /* @__PURE__ */ jsx(Label, { children: "Tarikh Permohonan *" }),
+            /* @__PURE__ */ jsxs(Popover, { children: [
+              /* @__PURE__ */ jsx(PopoverTrigger, { asChild: true, children: /* @__PURE__ */ jsxs(
+                Button,
+                {
+                  variant: "outline",
+                  className: cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.applicationDate && "text-muted-foreground"
+                  ),
+                  children: [
+                    /* @__PURE__ */ jsx(CalendarIcon, { className: "mr-2 h-4 w-4" }),
+                    formData.applicationDate ? format(formData.applicationDate, "PPP") : /* @__PURE__ */ jsx("span", { children: "Pilih tarikh" })
+                  ]
+                }
+              ) }),
+              /* @__PURE__ */ jsx(PopoverContent, { className: "w-auto p-0", children: /* @__PURE__ */ jsx(
+                Calendar,
+                {
+                  mode: "single",
+                  selected: formData.applicationDate,
+                  onSelect: (date) => handleInputChange("applicationDate", date),
+                  initialFocus: true
+                }
+              ) })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
+        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Tapak Perniagaan" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pilih negeri tapak berniaga dan IPD yang menjaga kawasan tersebut." })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "grid gap-6", children: [
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessLocation", children: "Tempat Berniaga *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "businessLocation",
+                  placeholder: "cth: Tapak Pasaraya Lotus, Desa Cemerlang",
+                  value: formData.businessLocation,
+                  onChange: (e) => handleInputChange("businessLocation", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddress1", children: "Alamat Berniaga 1 *" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "businessAddress1",
+                  placeholder: "No Lot / Gerai",
+                  value: formData.businessAddress1,
+                  onChange: (e) => handleInputChange("businessAddress1", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddress2", children: "Alamat Berniaga 2" }),
+              /* @__PURE__ */ jsx(
+                Textarea,
+                {
+                  id: "businessAddress2",
+                  placeholder: "Tambahan alamat seperti taman, landmark, atau maklumat lokasi",
+                  rows: 3,
+                  value: formData.businessAddress2,
+                  onChange: (e) => handleInputChange("businessAddress2", e.target.value)
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2", children: [
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "businessState", children: "Negeri Tapak *" }),
+                /* @__PURE__ */ jsxs(
+                  Select,
+                  {
+                    value: formData.businessState,
+                    onValueChange: (value) => handleInputChange("businessState", value),
+                    children: [
+                      /* @__PURE__ */ jsx(SelectTrigger, { id: "businessState", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih negeri" }) }),
+                      /* @__PURE__ */ jsx(SelectContent, { children: states.map((state) => /* @__PURE__ */ jsx(SelectItem, { value: state.value, children: state.label }, state.value)) })
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+                /* @__PURE__ */ jsx(Label, { htmlFor: "ipdName", children: "Nama IPD *" }),
+                /* @__PURE__ */ jsx(
+                  Input,
+                  {
+                    id: "ipdName",
+                    placeholder: "cth: IPD Johor Bahru Selatan",
+                    value: formData.ipdName,
+                    onChange: (e) => handleInputChange("ipdName", e.target.value)
+                  }
+                )
+              ] })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "pt-6", children: [
+          /* @__PURE__ */ jsx(
+            Button,
+            {
+              type: "submit",
+              disabled: isSubmitting,
+              className: "w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white h-12 text-lg",
+              children: isSubmitting ? /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(Loader2, { className: "mr-2 h-5 w-5 animate-spin" }),
+                "Sedang Proses..."
+              ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+                /* @__PURE__ */ jsx(Download, { className: "mr-2 h-5 w-5" }),
+                "Jana Dokumen Permit"
+              ] })
+            }
+          ),
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600 text-center mt-4", children: "Dengan klik butang di atas, dokumen permit akan dijana dan anda akan dihubungkan ke WhatsApp kami." })
+        ] })
+      ] }) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "mt-8 bg-gradient-to-br from-amber-50 to-green-50 border border-green-300 rounded-xl p-6 shadow-lg", children: [
+      /* @__PURE__ */ jsxs("h3", { className: "text-xl font-bold text-amber-900 mb-4 flex items-center", children: [
+        /* @__PURE__ */ jsx(MessageCircle, { className: "mr-3 h-6 w-6 text-green-600" }),
+        "Nak Bantuan?"
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "text-slate-700 mb-4", children: "Team BMFireworks ada pengalaman bantu customer buat permohonan permit. WhatsApp je untuk panduan lengkap supaya permohonan lulus dengan mudah!" }),
+      /* @__PURE__ */ jsxs(
+        Button,
+        {
+          onClick: () => {
+            const message = "Hi BMFireworks! Saya nak tanya tentang permohonan permit mercun.";
+            const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, "_blank");
+          },
+          variant: "outline",
+          className: "border-green-600 text-green-700 hover:bg-green-50",
+          children: [
+            /* @__PURE__ */ jsx(MessageCircle, { className: "mr-2 h-4 w-4" }),
+            "WhatsApp Konsultasi"
+          ]
+        }
+      )
+    ] })
+  ] }) });
+};
 const queryClient = new QueryClient();
 const App = () => /* @__PURE__ */ jsx(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsx(ThemeProvider, { children: /* @__PURE__ */ jsx(LanguageProvider, { children: /* @__PURE__ */ jsx(CartProvider, { children: /* @__PURE__ */ jsxs(TooltipProvider, { children: [
   /* @__PURE__ */ jsx(Toaster, {}),
@@ -8535,6 +9116,7 @@ const App = () => /* @__PURE__ */ jsx(QueryClientProvider, { client: queryClient
       /* @__PURE__ */ jsx(Route, { path: "/packages", element: /* @__PURE__ */ jsx(Packages, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/sales", element: /* @__PURE__ */ jsx(Sales, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/permit-guide", element: /* @__PURE__ */ jsx(PermitGuide, {}) }),
+      /* @__PURE__ */ jsx(Route, { path: "/permitpdrm", element: /* @__PURE__ */ jsx(PermitPDRM, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/safety-guide", element: /* @__PURE__ */ jsx(SafetyGuide, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/testimonials", element: /* @__PURE__ */ jsx(Testimonials, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/contact", element: /* @__PURE__ */ jsx(Contact, {}) }),

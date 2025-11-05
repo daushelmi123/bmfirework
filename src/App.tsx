@@ -20,6 +20,7 @@ import Contact from "@/pages/Contact";
 import Cart from "@/pages/Cart";
 import NotFound from "@/pages/NotFound";
 import Sales from "@/pages/Sales";
+import PermitPDRM from "@/pages/PermitPDRM";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
                   <Route path="/packages" element={<Packages />} />
                   <Route path="/sales" element={<Sales />} />
                   <Route path="/permit-guide" element={<PermitGuide />} />
+                  <Route path="/permitpdrm" element={<PermitPDRM />} />
                   <Route path="/safety-guide" element={<SafetyGuide />} />
                   <Route path="/testimonials" element={<Testimonials />} />
                   <Route path="/contact" element={<Contact />} />
