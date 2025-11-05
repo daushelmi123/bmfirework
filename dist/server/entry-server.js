@@ -1276,7 +1276,7 @@ const Navbar = () => {
     { name: "Cartons", href: "/cartons" },
     { name: t("nav.packages"), href: "/packages" },
     { name: t("nav.permitGuide"), href: "/permit-guide" },
-    { name: "Surat Lantikan Agent", href: "/permitpdrm" },
+    { name: "Surat Lantikan Agent", href: "/suratlantikanagent" },
     { name: t("nav.safetyGuide"), href: "/safety-guide" },
     { name: t("nav.testimonials"), href: "/testimonials" },
     { name: t("nav.contact"), href: "/contact" }
@@ -9117,7 +9117,7 @@ const App = () => /* @__PURE__ */ jsx(QueryClientProvider, { client: queryClient
       /* @__PURE__ */ jsx(Route, { path: "/packages", element: /* @__PURE__ */ jsx(Packages, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/sales", element: /* @__PURE__ */ jsx(Sales, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/permit-guide", element: /* @__PURE__ */ jsx(PermitGuide, {}) }),
-      /* @__PURE__ */ jsx(Route, { path: "/permitpdrm", element: /* @__PURE__ */ jsx(PermitPDRM, {}) }),
+      /* @__PURE__ */ jsx(Route, { path: "/suratlantikanagent", element: /* @__PURE__ */ jsx(PermitPDRM, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/safety-guide", element: /* @__PURE__ */ jsx(SafetyGuide, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/testimonials", element: /* @__PURE__ */ jsx(Testimonials, {}) }),
       /* @__PURE__ */ jsx(Route, { path: "/contact", element: /* @__PURE__ */ jsx(Contact, {}) }),
