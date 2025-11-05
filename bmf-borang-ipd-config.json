@@ -1,0 +1,60 @@
+{
+  "templates": [
+    {
+      "id": "bmfireworks-borang-ipd",
+      "file": "borang ipd 1 bm.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-BM-Borang-IPD.pdf",
+      "description": "BM Fireworks - Borang Permohonan IPD",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "fullName",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "icNumber",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "occupation",
+          "payloadField": "occupation",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "addressLine1",
+          "payloadField": "addressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "addressLine23",
+          "payloadField": "addressLine2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "companyName",
+          "payloadField": "companyName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddressLine1",
+          "payloadField": "businessAddress1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddressLine23",
+          "payloadField": "businessAddress2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "phone",
+          "payloadField": "phone"
+        },
+        {
+          "templateField": "applicationDate",
+          "payloadField": "applicationDate"
+        }
+      ]
+    }
+  ]
+}
