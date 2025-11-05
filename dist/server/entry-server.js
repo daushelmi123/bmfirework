@@ -8696,11 +8696,10 @@ const PermitPDRM = () => {
         businessState: formData.businessState,
         ipdName: formData.ipdName
       };
-      const response = await fetch("https://grkfireworks.com:4000/api/generate-permit", {
+      const response = await fetch("https://bmfirework.com:3001/api/generate-permit", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": "bmf_prod_x0DqL3kq+iSZc5p6y7kTMYToR5MuVNN/atLNOm+5DKE="
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       });
