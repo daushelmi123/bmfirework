@@ -62,6 +62,14 @@ def deploy_mercunberlesen():
             if os.path.exists(local_file):
                 upload_file(local_file, file)
         
+        # Upload pre-rendered HTML files
+        html_files = ['products.html', 'cartons.html', 'packages.html', 'permit-guide.html', 
+                      'safety-guide.html', 'testimonials.html', 'contact.html', 'cart.html']
+        for file in html_files:
+            local_file = os.path.join(LOCAL_DIR, file)
+            if os.path.exists(local_file):
+                upload_file(local_file, file)
+        
         # Upload assets directory
         assets_dir = os.path.join(LOCAL_DIR, 'assets')
         if os.path.exists(assets_dir):

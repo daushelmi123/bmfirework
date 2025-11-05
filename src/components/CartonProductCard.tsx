@@ -1,6 +1,5 @@
 
-import { ShoppingCart, Play } from 'lucide-react';
-import { Button } from './ui/button';
+import { Play } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useLanguage } from '../context/LanguageContext';
 import { useCart } from '../context/CartContext';
@@ -133,6 +132,7 @@ const CartonProductCard = ({ product, onAddToCart, index }: CartonProductCardPro
                 <button
                   onClick={handleDecrement}
                   disabled={quantity === 0}
+                  aria-label="Kurangkan kuantiti"
                   className="w-8 h-8 bg-slate-600 text-yellow-100 rounded-lg flex items-center justify-center font-bold text-sm disabled:opacity-40 hover:bg-slate-700 transition-colors"
                 >
                   -
@@ -142,6 +142,7 @@ const CartonProductCard = ({ product, onAddToCart, index }: CartonProductCardPro
                 </span>
                 <button
                   onClick={handleIncrement}
+                  aria-label="Tambah kuantiti"
                   className="w-8 h-8 bg-slate-600 text-yellow-100 rounded-lg flex items-center justify-center font-bold text-sm hover:bg-slate-700 transition-colors"
                 >
                   +

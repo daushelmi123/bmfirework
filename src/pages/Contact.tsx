@@ -48,7 +48,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-25 to-slate-100 py-8 relative overflow-hidden">
-      {/* Berlesen decorative elements */}
+      {/* celebrasi decorative elements */}
       <div className="absolute top-8 left-8 text-4xl opacity-20 animate-pulse">💬</div>
       <div className="absolute top-16 right-12 text-3xl opacity-15 animate-bounce">🌙</div>
       <div className="absolute bottom-20 left-16 text-2xl opacity-10">✨</div>
@@ -71,7 +71,7 @@ const Contact = () => {
             Hubungi Kami
           </h1>
           <p className="text-xl text-slate-700 max-w-3xl mx-auto">
-            Ada soalan mercun Berlesen? Nak buat order besar-besaran? WhatsApp je terus - kami sedia membantu! 🎉
+            Ada soalan mercun celebrasi? Nak buat order besar-besaran? WhatsApp je terus - kami sedia membantu! 🎉
           </p>
         </div>
 
@@ -138,7 +138,7 @@ const Contact = () => {
                   <h3 className="text-lg font-semibold text-slate-800">Waktu Operasi</h3>
                   <div className="text-slate-700">
                     <p>Isnin - Sabtu: 9:00 AM - 6:00 PM</p>
-                    <p>Ahad: Tutup (Berlesen tetap buka! 🎉)</p>
+                    <p>Ahad: Tutup (celebrasi tetap buka! 🎉)</p>
                   </div>
                 </div>
               </div>
@@ -153,7 +153,7 @@ const Contact = () => {
               </p>
               <Button
                 onClick={() => {
-                  const message = "Hi! Nak tanya pasal mercun Berlesen. Boleh bantu?";
+                  const message = "Hi! Nak tanya pasal mercun celebrasi. Boleh bantu?";
                   const whatsappNumber = "+60137340415";
                   const url = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
                   window.open(url, '_blank');
@@ -210,7 +210,7 @@ const Contact = () => {
                     id="message"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Bagitahu kami pasal majlis Berlesen, soalan, atau keperluan anda..."
+                    placeholder="Bagitahu kami pasal majlis celebrasi, soalan, atau keperluan anda..."
                     rows={5}
                     className="border-2 border-gray-300 focus:border-black"
                     required
@@ -248,11 +248,11 @@ const Contact = () => {
                 </div>
                 <div>
                   <p className="font-semibold text-slate-800">S: Hantar ke mana je?</p>
-                  <p className="text-slate-700">J: Seluruh Malaysia! Klang Valley ada rate special untuk Berlesen.</p>
+                  <p className="text-slate-700">J: Seluruh Malaysia! Klang Valley ada rate special untuk celebrasi.</p>
                 </div>
                 <div>
                   <p className="font-semibold text-slate-800">S: Boleh buat pakej custom?</p>
-                  <p className="text-slate-700">J: Boleh! WhatsApp je untuk pakej Berlesen special ikut budget.</p>
+                  <p className="text-slate-700">J: Boleh! WhatsApp je untuk pakej celebrasi special ikut budget.</p>
                 </div>
               </div>
             </div>

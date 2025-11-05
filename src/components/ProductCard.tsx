@@ -1,6 +1,5 @@
 
-import { ShoppingCart, Play } from 'lucide-react';
-import { Button } from './ui/button';
+import { Play } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useLanguage } from '../context/LanguageContext';
 import { useCart } from '../context/CartContext';
@@ -79,7 +78,7 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-white border-2 border-gray-200 shadow-sm cursor-pointer hover:border-gray-300 transition-colors mb-2">
                   <img
                     src={product.image}
-                    alt={product.name}
+                    alt={`${product.name} murah Malaysia`}
                     className="w-full h-full object-cover no-select no-drag no-context"
                     onContextMenu={(e) => e.preventDefault()}
                     onDragStart={(e) => e.preventDefault()}
@@ -95,7 +94,7 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
                 <div className="w-full">
                   <img
                     src={product.image}
-                    alt={product.name}
+                    alt={`${product.name} murah Malaysia - BM Firework`}
                     className="w-full h-auto rounded-lg no-select no-drag no-context"
                     onContextMenu={(e) => e.preventDefault()}
                     onDragStart={(e) => e.preventDefault()}
@@ -163,6 +162,7 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
                 <button
                   onClick={handleDecrement}
                   disabled={quantity === 0}
+                  aria-label="Kurangkan kuantiti"
                   className="w-8 h-8 bg-slate-600 text-yellow-100 rounded-lg flex items-center justify-center font-bold text-sm disabled:opacity-40 hover:bg-slate-700 transition-colors"
                 >
                   -
@@ -172,6 +172,7 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
                 </span>
                 <button
                   onClick={handleIncrement}
+                  aria-label="Tambah kuantiti"
                   className="w-8 h-8 bg-slate-600 text-yellow-100 rounded-lg flex items-center justify-center font-bold text-sm hover:bg-slate-700 transition-colors"
                 >
                   +

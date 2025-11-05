@@ -39,13 +39,14 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="flex justify-between items-center h-20 gap-4">
           {/* Logo Section */}
-          <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
-            <span className="text-3xl">🌙</span>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent leading-tight whitespace-nowrap">
-                MercunBerlesen
-              </span>
-            </div>
+          <Link to="/" className="flex items-center flex-shrink-0">
+            <img
+              src="https://res.cloudinary.com/de8w3ykvy/image/upload/v1762139873/bearboom_x_bmfireworks_1_ec7aua.png"
+              alt="Bearboom × BMFireworks"
+              className="h-10 w-auto"
+              loading="eager"
+              decoding="async"
+            />
           </Link>
 
           {/* Desktop Navigation - Main Items */}

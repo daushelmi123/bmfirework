@@ -12,7 +12,7 @@ const PermitGuide = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-25 to-slate-100 py-8 relative overflow-hidden">
-      {/* Berlesen decorative elements */}
+      {/* celebrasi decorative elements */}
       <div className="absolute top-8 left-8 text-4xl opacity-20 animate-pulse">📄</div>
       <div className="absolute top-16 right-12 text-3xl opacity-15 animate-bounce">🌙</div>
       <div className="absolute bottom-20 left-16 text-2xl opacity-10">✨</div>
@@ -36,7 +36,7 @@ const PermitGuide = () => {
             Panduan Permit Bunga Api
           </h1>
           <p className="text-xl text-slate-700 max-w-3xl mx-auto">
-            Nak main mercun Berlesen dengan selamat & sah? Ikut panduan ni step by step! 🎆
+            Nak main mercun celebrasi dengan selamat & sah? Ikut panduan ni step by step! 🎆
           </p>
         </div>
 
@@ -72,7 +72,7 @@ const PermitGuide = () => {
                   <li>✨ Warganegara Malaysia atau penduduk tetap</li>
                   <li>✨ Umur minimum: 21 tahun</li>
                   <li>✨ Tiada rekod jenayah berkaitan letupan</li>
-                  <li>✨ Ada sebab munasabah (sambutan Berlesen, majlis, etc.)</li>
+                  <li>✨ Ada sebab munasabah (sambutan celebrasi, majlis, etc.)</li>
                 </ul>
               </div>
             </div>

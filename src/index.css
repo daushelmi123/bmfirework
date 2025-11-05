@@ -2,39 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* MercunBerlesen.com - Premium Black & Gold Design System
-All colors focused on premium black/gold authority theme. All colors MUST be HSL.
+/* BM Firework.com - Premium Purple Design System
+All colors focused on premium purple theme. All colors MUST be HSL.
 */
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 214 27% 10%;
+    --foreground: 270 50% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 214 27% 10%;
+    --card-foreground: 270 50% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 214 27% 10%;
+    --popover-foreground: 270 50% 15%;
 
-    --primary: 214 27% 10%;
-    --primary-foreground: 45 93% 75%;
+    --primary: 270 50% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 45 93% 75%;
-    --secondary-foreground: 214 27% 10%;
+    --secondary: 270 30% 85%;
+    --secondary-foreground: 270 50% 15%;
 
     --muted: 0 0% 95%;
-    --muted-foreground: 214 15% 40%;
+    --muted-foreground: 270 25% 40%;
 
-    --accent: 45 93% 75%;
-    --accent-foreground: 214 27% 10%;
+    --accent: 270 50% 60%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 100% 95%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 45 93% 75%;
+    --border: 270 20% 90%;
+    --input: 270 20% 90%;
+    --ring: 270 50% 60%;
 
     --radius: 0.5rem;
 
@@ -56,33 +56,33 @@ All colors focused on premium black/gold authority theme. All colors MUST be HSL
   }
 
   .dark {
-    --background: 214 27% 8%;
-    --foreground: 45 93% 85%;
+    --background: 270 50% 8%;
+    --foreground: 270 30% 85%;
 
-    --card: 214 27% 12%;
-    --card-foreground: 45 93% 85%;
+    --card: 270 50% 12%;
+    --card-foreground: 270 30% 85%;
 
-    --popover: 214 27% 12%;
-    --popover-foreground: 45 93% 85%;
+    --popover: 270 50% 12%;
+    --popover-foreground: 270 30% 85%;
 
-    --primary: 45 93% 75%;
-    --primary-foreground: 214 27% 10%;
+    --primary: 270 50% 70%;
+    --primary-foreground: 270 50% 10%;
 
-    --secondary: 214 27% 15%;
-    --secondary-foreground: 45 93% 85%;
+    --secondary: 270 50% 15%;
+    --secondary-foreground: 270 30% 85%;
 
-    --muted: 214 27% 15%;
-    --muted-foreground: 45 30% 60%;
+    --muted: 270 50% 15%;
+    --muted-foreground: 270 20% 60%;
 
-    --accent: 45 93% 75%;
-    --accent-foreground: 214 27% 10%;
+    --accent: 270 50% 70%;
+    --accent-foreground: 270 50% 10%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 20% 20%;
-    --input: 214 20% 20%;
-    --ring: 45 93% 75%;
+    --border: 270 30% 20%;
+    --input: 270 30% 20%;
+    --ring: 270 50% 70%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

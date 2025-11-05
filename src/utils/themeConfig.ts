@@ -44,8 +44,8 @@ export const themeConfigs: Record<string, ThemeConfig> = {
       }
     },
     branding: {
-      title: 'MercunBerlesen',
-      subtitle: 'Distributor Mercun Berlesen Rasmi #1 Malaysia',
+      title: 'Mercuncelebrasi',
+      subtitle: 'Distributor Mercun celebrasi Rasmi #1 Malaysia',
       description: '100% legal, kualiti premium, dokumentasi lengkap',
       positioning: 'premium licensed distributor'
     }
@@ -127,6 +127,32 @@ export const themeConfigs: Record<string, ThemeConfig> = {
       description: 'Quality fireworks for all occasions and celebrations',
       positioning: 'professional fireworks supplier'
     }
+  },
+
+  // Purple Theme - BM Firework
+  'bmfirework.com': {
+    name: 'Purple BM',
+    colors: {
+      primary: '262 83% 58%',        // Purple
+      primaryForeground: '210 40% 98%', // White
+      secondary: '220 14% 96%',      // Light Gray
+      secondaryForeground: '262 83% 58%', // Purple
+      accent: '262 83% 58%',         // Purple
+      accentForeground: '210 40% 98%', // White
+      cartColors: {
+        above: 'from-purple-600 to-purple-700',
+        below: 'from-red-800 to-red-700',
+        border: 'border-purple-400',
+        icon: 'text-purple-400',
+        text: 'text-purple-100'
+      }
+    },
+    branding: {
+      title: 'BM Firework',
+      subtitle: 'Mercun & Bunga Api Murah Malaysia',
+      description: 'Harga murah, kualiti terjamin untuk sambutan meriah',
+      positioning: 'affordable quality fireworks'
+    }
   }
 };
 
@@ -134,9 +160,9 @@ export const themeConfigs: Record<string, ThemeConfig> = {
 export const getCurrentTheme = (): ThemeConfig => {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    return themeConfigs[hostname] || themeConfigs['mercunberlesen.com']; // Default fallback
+    return themeConfigs[hostname] || themeConfigs['bmfirework.com']; // Default fallback
   }
-  return themeConfigs['mercunberlesen.com']; // Server-side fallback
+  return themeConfigs['bmfirework.com']; // Server-side fallback
 };
 
 // Apply theme colors to CSS variables

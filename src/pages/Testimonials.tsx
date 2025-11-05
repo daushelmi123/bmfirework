@@ -5,41 +5,41 @@ const testimonials = [
   {
     id: 1,
     name: "Ahmad Rahman",
-    event: "Majlis Tunang Berlesen",
+    event: "Majlis Tunang celebrasi",
     rating: 5,
-    text: "Mercun untuk majlis tunang masa Berlesen memang terbaik! Team MercunBerlesen tolong settle permit semua. Tetamu puji habis display mercun malam tu!",
+    text: "Mercun untuk majlis tunang masa celebrasi memang terbaik! Team Mercuncelebrasi tolong settle permit semua. Tetamu puji habis display mercun malam tu!",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150"
   },
   {
     id: 2,
     name: "Siti Nurhaliza",
-    event: "Sambutan Hari Berlesen",
+    event: "Sambutan Hari celebrasi",
     rating: 5,
-    text: "Perfect untuk sambutan Berlesen! Pakej keluarga memang best, selamat dan semua suka. Anak-anak excited gila tengok bunga api. Highly recommended!",
+    text: "Perfect untuk sambutan celebrasi! Pakej keluarga memang best, selamat dan semua suka. Anak-anak excited gila tengok bunga api. Highly recommended!",
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150"
   },
   {
     id: 3,
     name: "David Lim",
-    event: "Open House Berlesen Company",
+    event: "Open House celebrasi Company",
     rating: 5,
-    text: "Service memang professional! Diorang handle semua permit untuk open house Berlesen company. Display mercun malam tu memang spectacular!",
+    text: "Service memang professional! Diorang handle semua permit untuk open house celebrasi company. Display mercun malam tu memang spectacular!",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150"
   },
   {
     id: 4,
     name: "Priya Sharma",
-    event: "Majlis Doa Selamat Berlesen",
+    event: "Majlis Doa Selamat celebrasi",
     rating: 5,
-    text: "Buat surprise untuk family masa majlis doa selamat Berlesen. Pakej yang ambil memang cantik - warna-warni dan selamat. Terima kasih MercunBerlesen!",
+    text: "Buat surprise untuk family masa majlis doa selamat celebrasi. Pakej yang ambil memang cantik - warna-warni dan selamat. Terima kasih Mercuncelebrasi!",
     image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=150"
   },
   {
     id: 5,
     name: "Raj Kumar",
-    event: "Majlis Reunion Berlesen",
+    event: "Majlis Reunion celebrasi",
     rating: 5,
-    text: "Kualiti mercun memang top! WhatsApp support dia laju je reply. Next Berlesen confirm order lagi untuk reunion family!",
+    text: "Kualiti mercun memang top! WhatsApp support dia laju je reply. Next celebrasi confirm order lagi untuk reunion family!",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150"
   },
   {
@@ -70,7 +70,7 @@ const Testimonials = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-25 to-slate-100 py-8 relative overflow-hidden">
-      {/* Berlesen decorative elements */}
+      {/* celebrasi decorative elements */}
       <div className="absolute top-8 left-8 text-4xl opacity-20 animate-pulse">🎆</div>
       <div className="absolute top-16 right-12 text-3xl opacity-15 animate-bounce">🌙</div>
       <div className="absolute bottom-20 left-16 text-2xl opacity-10">✨</div>
@@ -90,10 +90,10 @@ const Testimonials = () => {
         <div className="text-center mb-12">
           <div className="text-6xl mb-6">🌟🌙</div>
           <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-700 to-yellow-600 bg-clip-text text-transparent mb-4 drop-shadow-sm">
-            Testimoni Pelanggan Berlesen
+            Testimoni Pelanggan celebrasi
           </h1>
           <p className="text-xl text-slate-700 max-w-3xl mx-auto">
-            Dengar sendiri cerita best dari customer yang dah meriah Berlesen dengan mercun kami! 🎉
+            Dengar sendiri cerita best dari customer yang dah meriah celebrasi dengan mercun kami! 🎉
           </p>
         </div>
 
@@ -105,7 +105,7 @@ const Testimonials = () => {
           </div>
           <div className="text-center bg-gradient-to-br from-white to-slate-50 p-6 rounded-xl border-2 border-yellow-200 shadow-lg">
             <div className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-slate-700 bg-clip-text text-transparent mb-2">1000+</div>
-            <div className="text-slate-700">Majlis Berlesen Meriah</div>
+            <div className="text-slate-700">Majlis celebrasi Meriah</div>
           </div>
           <div className="text-center bg-gradient-to-br from-white to-yellow-50 p-6 rounded-xl border-2 border-slate-200 shadow-lg">
             <div className="text-4xl font-bold bg-gradient-to-r from-slate-700 to-yellow-600 bg-clip-text text-transparent mb-2">4.9/5</div>
@@ -163,10 +163,10 @@ const Testimonials = () => {
           
           <div className="relative">
             <div className="text-4xl mb-4">🎆</div>
-            <h2 className="text-3xl font-bold mb-4 text-yellow-100">Nak Berlesen Meriah Macam Ni Juga?</h2>
+            <h2 className="text-3xl font-bold mb-4 text-yellow-100">Nak celebrasi Meriah Macam Ni Juga?</h2>
             <p className="text-xl text-yellow-50 mb-6 max-w-2xl mx-auto">
-              Join ratusan pelanggan yang dah percaya kami untuk majlis Berlesen diorang. 
-              Jom buat Berlesen tahun ni paling memorable dengan mercun premium kami!
+              Join ratusan pelanggan yang dah percaya kami untuk majlis celebrasi diorang. 
+              Jom buat celebrasi tahun ni paling memorable dengan mercun premium kami!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -188,13 +188,13 @@ const Testimonials = () => {
         {/* Review Submission */}
         <div className="mt-12 bg-gradient-to-br from-yellow-50 to-slate-50 rounded-xl p-8 text-center border-2 border-slate-200 shadow-lg">
           <div className="text-3xl mb-4">💬</div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-4">Berlesen Best Dengan MercunBerlesen?</h3>
+          <h3 className="text-2xl font-bold text-slate-800 mb-4">celebrasi Best Dengan Mercuncelebrasi?</h3>
           <p className="text-slate-700 mb-6">
-            Share la pengalaman & gambar Berlesen korang! Kami nak dengar cerita best korang.
+            Share la pengalaman & gambar celebrasi korang! Kami nak dengar cerita best korang.
           </p>
           <button
             onClick={() => {
-              const message = "Hi! Nak share testimoni pasal mercun Berlesen dari MercunBerlesen.";
+              const message = "Hi! Nak share testimoni pasal mercun celebrasi dari Mercuncelebrasi.";
               const whatsappNumber = "+60137340415";
               const url = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
               window.open(url, '_blank');

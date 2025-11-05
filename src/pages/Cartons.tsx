@@ -54,7 +54,7 @@ const Cartons = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-25 to-slate-100 py-8 relative overflow-hidden">
-      {/* Berlesen decorative elements */}
+      {/* celebrasi decorative elements */}
       <div className="absolute top-12 left-12 text-4xl opacity-20 animate-pulse">📦</div>
       <div className="absolute top-20 right-16 text-3xl opacity-15 animate-bounce">🌙</div>
       <div className="absolute bottom-24 left-20 text-2xl opacity-10">✨</div>
@@ -74,10 +74,10 @@ const Cartons = () => {
         <div className="text-center mb-16">
           <div className="text-6xl mb-6">📦🌙</div>
           <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-slate-700 to-yellow-600 bg-clip-text text-transparent mb-6 drop-shadow-sm">
-            Produk Carton Berlesen
+            Produk Carton celebrasi
           </h1>
           <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
-            Koleksi borong mercun Berlesen terbaik - beli carton jimat lebih! 🎉
+            Koleksi borong mercun celebrasi terbaik - beli carton jimat lebih! 🎉
           </p>
         </div>
 
