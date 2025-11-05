@@ -267,6 +267,17 @@ const PriceRequestSection = ({ states, pdfUrl, webhookUrl, copy }: PriceRequestS
       setErrors((prev) => ({ ...prev, global: copy.errors.technical }));
     } finally {
       await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.download = copy.downloadFilename || 'bmfireworks-price-list.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
       redirectToWhatsApp();
       resetForm();
       setOpen(false);

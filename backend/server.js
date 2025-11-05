@@ -5,17 +5,81 @@ const fetch = require('node-fetch');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL || 'http://84.247.150.90:4001/api/pdf-orders';
+const ALLOWED_ORIGINS = process.env.FRONTEND_ORIGINS
+  ? process.env.FRONTEND_ORIGINS.split(',').map((origin) => origin.trim())
+  : ['https://bmfirework.com', 'http://localhost:5173'];
+const PRICE_WEBHOOK_URL = process.env.PRICE_WEBHOOK_URL || '';
+const PDF_API_KEY = process.env.PDF_API_KEY || '';
 
 // Middleware
 app.use(cors({
-  origin: ['https://bmfirework.com', 'http://localhost:5173'],
-  credentials: true
+  origin: ALLOWED_ORIGINS,
+  credentials: true,
 }));
 app.use(express.json());
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'BMFireworks Backend API is running' });
+});
+
+app.post('/api/price-request', async (req, res) => {
+  const { name, phone, state, stateLabel, source } = req.body || {};
+
+  if (!name || !phone || !state) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      required: ['name', 'phone', 'state'],
+    });
+  }
+
+  if (!PRICE_WEBHOOK_URL) {
+    console.warn('[price-request] PRICE_WEBHOOK_URL not configured');
+    return res.status(503).json({
+      error: 'Price request handler not configured',
+    });
+  }
+
+  try {
+    const payload = {
+      name,
+      phone,
+      state,
+      stateLabel: stateLabel || state,
+      source: source || 'bmfireworks-price-download',
+      timestamp: new Date().toISOString(),
+      meta: {
+        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+        userAgent: req.headers['user-agent'],
+      },
+    };
+
+    const response = await fetch(PRICE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[price-request] Webhook failed:', errorText);
+      return res.status(502).json({
+        error: 'Failed to deliver payload to webhook',
+        details: errorText,
+      });
+    }
+
+    return res.status(204).send();
+  } catch (error) {
+    console.error('[price-request] Unexpected error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message,
+    });
+  }
 });
 
 // Proxy endpoint for PDF generation
@@ -55,12 +119,19 @@ app.post('/api/generate-permit', async (req, res) => {
     // Log request (for monitoring)
     console.log(`[${new Date().toISOString()}] PDF Generation Request: ${fullName} - ${applicationType}`);
 
+    if (!PDF_API_KEY) {
+      console.warn('[generate-permit] PDF_API_KEY not configured');
+      return res.status(503).json({
+        error: 'PDF service not configured',
+      });
+    }
+
     // Call external PDF service
-    const response = await fetch('https://grkfireworks.com:4000/api/generate-permit', {
+    const response = await fetch(PDF_SERVICE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': process.env.PDF_API_KEY
+        'X-API-Key': PDF_API_KEY,
       },
       body: JSON.stringify(req.body)
     });

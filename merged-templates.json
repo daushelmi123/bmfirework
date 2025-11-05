@@ -1,0 +1,358 @@
+{
+  "templates": [
+    {
+      "id": "permohonan-ipd",
+      "file": "permohonan-ipd.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-permohonan-ipd.pdf",
+      "description": "IPD Fireworks Purchase/Sale Permit Application",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "applicant_name",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_ic",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "applicant_occupation",
+          "payloadField": "occupation",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_address_line1",
+          "payloadField": "addressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_address_line2",
+          "payloadField": "addressLine2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_address_line3",
+          "payloadField": "cityPostcode",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_address_line4",
+          "payloadField": "state",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "company_name",
+          "payloadField": "companyName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddress1",
+          "payloadField": "businessAddress1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddress2",
+          "payloadField": "businessAddress2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessLocation_+_businessState",
+          "payloadField": "businessLocationState",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "business_phone",
+          "payloadField": "phone"
+        },
+        {
+          "templateField": "fireworks_type",
+          "payloadField": "fireworksType",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "supplier_name_address1",
+          "payloadField": "supplierName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "supplier_name_address2",
+          "payloadField": "supplierAddress1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "supplier_name_address3",
+          "payloadField": "supplierAddress2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "appointment_letter_ref",
+          "payloadField": "appointmentLetterRef"
+        }
+      ]
+    },
+    {
+      "id": "lampiran-a",
+      "file": "lampiran-a.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-lampiran-a.pdf",
+      "description": "Lampiran A (Static)",
+      "enabled": true,
+      "fields": []
+    },
+    {
+      "id": "surat-agen",
+      "file": "surat-agen.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-surat-agen.pdf",
+      "description": "Agent Appointment Letter",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "applicant_name",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_ic",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "businessAddress1",
+          "payloadField": "businessAddress1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessLocation_+_businessState",
+          "payloadField": "businessLocationState",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_01",
+          "payloadField": "ipdName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_02",
+          "payloadField": "ipdCity",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_03",
+          "payloadField": "ipdAddress",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_04",
+          "payloadField": "ipdState",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "appointment_letter_ref",
+          "payloadField": "appointmentLetterRef"
+        }
+      ]
+    },
+    {
+      "id": "surat-kebenaran-cny",
+      "file": "surat-kebenaran-cny.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-surat-kebenaran-cny.pdf",
+      "description": "Surat Kebenaran GRK - CNY 2025",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "ipd_01",
+          "payloadField": "ipdName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_2",
+          "payloadField": "ipdCity",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_3",
+          "payloadField": "ipdAddress",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_4",
+          "payloadField": "ipdState",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "appointment_letter_ref",
+          "payloadField": "appointmentLetterRef"
+        }
+      ]
+    },
+    {
+      "id": "surat-kebenaran-raya",
+      "file": "surat-kebenaran-raya.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-surat-kebenaran-raya.pdf",
+      "description": "Surat Kebenaran GRK - Raya Aidilfitri 2025",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "ipd_01",
+          "payloadField": "ipdName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_2",
+          "payloadField": "ipdCity",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_3",
+          "payloadField": "ipdAddress",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd_4",
+          "payloadField": "ipdState",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "appointment_letter_ref",
+          "payloadField": "appointmentLetterRef"
+        }
+      ]
+    },
+    {
+      "id": "surat-kelulusan",
+      "file": "surat-kelulusan.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-surat-kelulusan.pdf",
+      "description": "Surat Kelulusan (Static)",
+      "enabled": true,
+      "fields": []
+    },
+    {
+      "id": "borang-e",
+      "file": "borang-e.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-borang-e.pdf",
+      "description": "Borang E (Static)",
+      "enabled": true,
+      "fields": []
+    },
+    {
+      "id": "borang-a",
+      "file": "borang-a.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-borang-a.pdf",
+      "description": "Borang A (Static)",
+      "enabled": true,
+      "fields": []
+    },
+    {
+      "id": "bmfireworks-surat-lantikan-cny",
+      "file": "(CNY BM) SURAT LANTIKAN.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-BM-Surat-Lantikan-CNY.pdf",
+      "description": "BM Fireworks - Surat Lantikan Agent (CNY 2026)",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "date",
+          "payloadField": "applicationDate"
+        },
+        {
+          "templateField": "ipd1",
+          "payloadField": "ipdLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd2",
+          "payloadField": "ipdLine2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd3",
+          "payloadField": "ipdLine3",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd4",
+          "payloadField": "ipdLine4",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd5",
+          "payloadField": "ipdLine5",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_name",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_ic",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "businessaddress1",
+          "payloadField": "businessAddressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessaddress23",
+          "payloadField": "businessAddressLine23",
+          "transform": "uppercase"
+        }
+      ]
+    },
+    {
+      "id": "bmfireworks-borang-ipd",
+      "file": "borang ipd 1 bm.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-BM-Borang-IPD.pdf",
+      "description": "BM Fireworks - Borang Permohonan IPD",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "fullName",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "icNumber",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "occupation",
+          "payloadField": "occupation",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "addressLine1",
+          "payloadField": "addressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "addressLine23",
+          "payloadField": "addressLine23",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "companyName",
+          "payloadField": "companyName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddressLine1",
+          "payloadField": "businessAddressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddressLine23",
+          "payloadField": "businessAddressLine23",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "phone",
+          "payloadField": "phone"
+        },
+        {
+          "templateField": "applicationDate",
+          "payloadField": "applicationDate"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "templates": [
+    {
+      "id": "bmfireworks-surat-lantikan-cny",
+      "file": "(CNY BM) SURAT LANTIKAN.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-BM-Surat-Lantikan-CNY.pdf",
+      "description": "BM Fireworks - Surat Lantikan Agent (CNY 2026)",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "date",
+          "payloadField": "applicationDate"
+        },
+        {
+          "templateField": "ipd1",
+          "payloadField": "ipdLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd2",
+          "payloadField": "ipdLine2",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd3",
+          "payloadField": "ipdLine3",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd4",
+          "payloadField": "ipdLine4",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "ipd5",
+          "payloadField": "ipdLine5",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_name",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "applicant_ic",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "businessaddress1",
+          "payloadField": "businessAddressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessaddress23",
+          "payloadField": "businessAddressLine23",
+          "transform": "uppercase"
+        }
+      ]
+    },
+    {
+      "id": "bmfireworks-borang-ipd",
+      "file": "borang ipd 1 bm.pdf",
+      "outputFilenameTemplate": "{{date}}-{{customer_name}}-BM-Borang-IPD.pdf",
+      "description": "BM Fireworks - Borang Permohonan IPD",
+      "enabled": true,
+      "fields": [
+        {
+          "templateField": "fullName",
+          "payloadField": "fullName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "icNumber",
+          "payloadField": "icNumber"
+        },
+        {
+          "templateField": "occupation",
+          "payloadField": "occupation",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "addressLine1",
+          "payloadField": "addressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "addressLine23",
+          "payloadField": "addressLine23",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "companyName",
+          "payloadField": "companyName",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddressLine1",
+          "payloadField": "businessAddressLine1",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "businessAddressLine23",
+          "payloadField": "businessAddressLine23",
+          "transform": "uppercase"
+        },
+        {
+          "templateField": "phone",
+          "payloadField": "phone"
+        },
+        {
+          "templateField": "applicationDate",
+          "payloadField": "applicationDate"
+        }
+      ]
+    }
+  ]
+}

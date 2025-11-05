@@ -3472,7 +3472,7 @@ const PeakSeasonSection = ({ peakSeasons, copy }) => /* @__PURE__ */ jsxs("secti
     /* @__PURE__ */ jsx("div", { className: "mt-10 text-center text-xs sm:text-sm text-yellow-200/80", children: copy.note })
   ] })
 ] });
-const PriceRequestSection = ({ states: states2, pdfUrl, webhookUrl, copy }) => {
+const PriceRequestSection = ({ states, pdfUrl, webhookUrl, copy }) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", phone: "", state: "" });
   const [errors, setErrors] = useState({});
@@ -3482,7 +3482,7 @@ const PriceRequestSection = ({ states: states2, pdfUrl, webhookUrl, copy }) => {
     setErrors({});
   };
   const redirectToWhatsApp = () => {
-    const stateOption = states2.find((item) => item.value === formData.state);
+    const stateOption = states.find((item) => item.value === formData.state);
     const stateName = (stateOption == null ? void 0 : stateOption.label) ?? formData.state;
     const message = `Hi BMFireworks! Saya ${formData.name.trim()} dari ${stateName}, nak dapatkan katalog terbaru. No telefon: ${formData.phone.trim()}`;
     const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
@@ -3509,7 +3509,7 @@ const PriceRequestSection = ({ states: states2, pdfUrl, webhookUrl, copy }) => {
     if (!validate()) return;
     setIsSubmitting(true);
     setErrors({});
-    const stateOption = states2.find((item) => item.value === formData.state);
+    const stateOption = states.find((item) => item.value === formData.state);
     try {
       if (webhookUrl) {
         await fetch(webhookUrl, {
@@ -3532,6 +3532,15 @@ const PriceRequestSection = ({ states: states2, pdfUrl, webhookUrl, copy }) => {
       console.error("Failed to send webhook payload", error);
       setErrors((prev) => ({ ...prev, global: copy.errors.technical }));
     } finally {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.download = copy.downloadFilename || "bmfireworks-price-list.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       await new Promise((resolve) => setTimeout(resolve, 300));
       redirectToWhatsApp();
       resetForm();
@@ -3603,7 +3612,7 @@ const PriceRequestSection = ({ states: states2, pdfUrl, webhookUrl, copy }) => {
                   disabled: isSubmitting,
                   children: [
                     /* @__PURE__ */ jsx("option", { value: "", children: copy.statePlaceholder }),
-                    states2.map((state) => /* @__PURE__ */ jsx("option", { value: state.value, children: state.label }, state.value))
+                    states.map((state) => /* @__PURE__ */ jsx("option", { value: state.value, children: state.label }, state.value))
                   ]
                 }
               ),
@@ -8607,23 +8616,763 @@ const PopoverContent = React.forwardRef(({ className, align = "center", sideOffs
   }
 ) }));
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
-const states = [
-  { value: "johor", label: "Johor" },
-  { value: "kedah", label: "Kedah" },
-  { value: "kelantan", label: "Kelantan" },
-  { value: "melaka", label: "Melaka" },
-  { value: "negeri_sembilan", label: "Negeri Sembilan" },
-  { value: "pahang", label: "Pahang" },
-  { value: "penang", label: "Pulau Pinang" },
-  { value: "perak", label: "Perak" },
-  { value: "perlis", label: "Perlis" },
-  { value: "sabah", label: "Sabah" },
-  { value: "sarawak", label: "Sarawak" },
-  { value: "selangor", label: "Selangor" },
-  { value: "terengganu", label: "Terengganu" },
-  { value: "wp_kuala_lumpur", label: "WP Kuala Lumpur" },
-  { value: "wp_labuan", label: "WP Labuan" },
-  { value: "wp_putrajaya", label: "WP Putrajaya" }
+const ipdList = [
+  {
+    name: "Ibu Pejabat Polis Daerah Batu Pahat",
+    address: "Ibupejabat Polis Daerah, Batu Pahat, Polis Diraja Malaysia",
+    postcode: "83000",
+    city: "Batu Pahat",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Iskandar Puteri",
+    address: "Ibu Pejabat Polis Iskandar Puteri, No.187, Jalan Bestari 2/5, Taman Nusa Bestari",
+    postcode: "81300",
+    city: "Skudai",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Johor Bahru (Selatan)",
+    address: "Ibu Pejabat Polis Daerah Johor Bahru (Selatan), Polis Diraja Malaysia, JKR No.489, Jalan Meldrum",
+    postcode: "80000",
+    city: "Johor Bahru",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Johor Bahru (Utara)",
+    address: "Ibu Pejabat Polis Daerah Johor Bahru Utara, Polis Diraja Malaysia",
+    postcode: "81300",
+    city: "Skudai",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kluang",
+    address: "Ibupejabat Polis Daerah Kluang, Polis Diraja Malaysia",
+    postcode: "86000",
+    city: "Kluang",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kota Tinggi",
+    address: "Ibupejabat Polis Daerah Kota Tinggi, Polis Diraja Malaysia, Jalan Sg. Siput, Kota Kechil",
+    postcode: "81900",
+    city: "Kota Tinggi",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kulai",
+    address: "Ibu Pejabat Polis Daerah Kulai, Polis Diraja Malaysia, Jalan Persiaran Indahpura 4",
+    postcode: "81000",
+    city: "Kulai",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Mersing",
+    address: "Ibupejabat Polis Daerah Mersing, Polis Diraja Malaysia, Jalan Sultanah",
+    postcode: "86800",
+    city: "Mersing",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Muar",
+    address: "Ibupejabat Polis Daerah Muar, Polis Diraja Malaysia, Jalan Mariam",
+    postcode: "84000",
+    city: "Muar",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Pontian",
+    address: "Ibupejabat Polis Daerah Pontian, Polis Diraja Malaysia, Jalan Sekolah Arab",
+    postcode: "82000",
+    city: "Pontian",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Segamat",
+    address: "Ibupejabat Polis Daerah Segamat, Polis Diraja Malaysia, JKR 90, Jalan Ibrahim",
+    postcode: "85000",
+    city: "Segamat",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Seri Alam",
+    address: "Ibu Pejabat Polis Daerah Seri Alam, Polis Diraja Malaysia, No. 5, Jalan Lembah, Bandar Seri Alam",
+    postcode: "81750",
+    city: "Masai",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Tangkak",
+    address: "Ibupejabat Polis Daerah Tangkak, Polis Diraja Malaysia, Jalan Paya Mas",
+    postcode: "84900",
+    city: "Tangkak",
+    state: "Johor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Baling",
+    address: "Ibu Pejabat Polis Daerah Baling, Polis Diraja Malaysia, Jalan Chanuk Nau",
+    postcode: "09100",
+    city: "Baling",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Bandar Baru",
+    address: "Ibu Pejabat Polis Daerah Bandar Baru, Polis Diraja Malaysia Jalan Selama",
+    postcode: "09800",
+    city: "Serdang",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kota Setar",
+    address: "Ibu Pejabat Polis Daerah Kota Setar, Polis Diraja Malaysia, Jalan Raja",
+    postcode: "05560",
+    city: "Alor Setar",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Muda",
+    address: "Ibu Pejabat Polis Daerah Kuala Muda, Polis Diraja Malaysia, Jalan Sungai Layar",
+    postcode: "08000",
+    city: "Sungai Petani",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kubang Pasu",
+    address: "Ibu Pejabat Polis Daerah Kubang Pasu, Polis Diraja Malaysia, Jalan Changlun",
+    postcode: "06000",
+    city: "Jitra",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kulim",
+    address: "Ibu Pejabat Polis Daerah Kulim, Polis Diraja Malaysia, Jalanraya Kulim",
+    postcode: "09000",
+    city: "Kulim",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Langkawi",
+    address: "Ibu Pejabat Polis Daerah Langkawi, Polis Diraja Malaysia, Jalan Air Hangat",
+    postcode: "07000",
+    city: "Langkawi",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Padang Terap",
+    address: "Ibu Pejabat Polis Daerah Padang Terap",
+    postcode: "06300",
+    city: "Kuala Nerang",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Pendang",
+    address: "Ibu Pejabat Polis Daerah Pendang, Polis Diraja Malaysia, Jln Pekan Pendang",
+    postcode: "06700",
+    city: "Pendang",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Sik",
+    address: "Ibu Pejabat Polis Daerah Sik, Polis Diraja Malaysia, Jalan Balai Pekan Sik",
+    postcode: "08200",
+    city: "Sik",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Yan",
+    address: "Ibu Pejabat Polis Daerah Yan, Polis Diraja Malaysia",
+    postcode: "06900",
+    city: "Yan",
+    state: "Kedah"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Bachok",
+    address: "Ibupejabat Polis Daerah Bachok, Polis Diraja Malaysia",
+    postcode: "16300",
+    city: "Bachok",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Gua Musang",
+    address: "Ibupejabat Polis Daerah Gua Musang, Polis Diraja Malaysia",
+    postcode: "18300",
+    city: "Gua Musang",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Jeli",
+    address: "Ibupejabat Polis Daerah Jeli, Polis Diraja Malaysia",
+    postcode: "17600",
+    city: "Jeli",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kota Bahru",
+    address: "Ibupejabat Polis Daerah Kota Bahru, Polis Diraja Malaysia, Jalan Padang Tembak, Pengkalan Chepa",
+    postcode: "16100",
+    city: "Kota Bahru",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Krai",
+    address: "",
+    postcode: "18000",
+    city: "Kuala Krai",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Machang",
+    address: "Ibupejabat Polis Daerah Machang, Polis Diraja Malaysia",
+    postcode: "18500",
+    city: "Machang",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Pasir Mas",
+    address: "Ibu Pejabat Polis Daerah Pasir Mas, Jalan Pasir Mas-Rantau Panjang",
+    postcode: "17000",
+    city: "Pasir Mas",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Pasir Puteh",
+    address: "",
+    postcode: "16800",
+    city: "Pasir Puteh",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Tanah Merah",
+    address: "Ibupejabat Polis Daerah Tanah Merah, Polis Diraja Malaysia",
+    postcode: "17500",
+    city: "Tanah Merah",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Tumpat",
+    address: "Ibupejabat Polis Daerah Tumpat, Polis Diraja Malaysia",
+    postcode: "16200",
+    city: "Tumpat",
+    state: "Kelantan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Alor Gajah",
+    address: "Ibu Pejabat Polis Daerah Alor Gajah, Polis Diraja Malaysia",
+    postcode: "78000",
+    city: "Alor Gajah",
+    state: "Melaka"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Jasin",
+    address: "Ibu Pejabat Polis Daerah Jasin, Polis Diraja Malaysia",
+    postcode: "77000",
+    city: "Jasin",
+    state: "Melaka"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Melaka Tengah",
+    address: "Ibu Pejabat Polis Daerah Melaka Tengah, Jalan BBP2, Taman Batu Berendam Putera",
+    postcode: "75350",
+    city: "Batu Berendam",
+    state: "Melaka"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Jelebu",
+    address: "Ibupejabat Polis Daerah, Jelebu, Polis Diraja Malaysia",
+    postcode: "71600",
+    city: "Kuala Klawang",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Jempol",
+    address: "Ibu Pejabat Polis Daerah Jempol, Polis Diraja Malaysia",
+    postcode: "72120",
+    city: "Bandar Seri jempol",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Pilah",
+    address: "Ibupejabat Daerah Polis, Kuala Pilah, Polis Diraja Malaysia, Jalan Bahau",
+    postcode: "72000",
+    city: "Kuala Pilah",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Nilai",
+    address: "Ibu Pejabat Polis Daerah Nilai, Polis Diraja Malaysia",
+    postcode: "71900",
+    city: "Nilai",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Port Dickson",
+    address: "IPD Port Dickson, Ibupejabat Polis Daerah, Port Dickson, Polis Diraja Malaysia",
+    postcode: "71000",
+    city: "Port Dickson",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Rembau",
+    address: "Ibupejabat Polis Daerah, Rembau",
+    postcode: "71300",
+    city: "Rembau",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Seremban",
+    address: "Ibupejabat Polis Daerah Seremban, Polis Diraja Malaysia",
+    postcode: "70300",
+    city: "Seremban",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Tampin",
+    address: "Ibupejabat Polis Daerah Tampin, Polis Diraja Malaysia",
+    postcode: "73000",
+    city: "Tampin",
+    state: "Negeri Sembilan"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Bentong",
+    address: "Ibupejabat Polis Daerah Bentong, Jalan Anuar, Polis Diraja Malaysia",
+    postcode: "28700",
+    city: "Bentong",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Bera",
+    address: "Ibupejabat Polis Daerah Bera, Polis Diraja Malaysia",
+    postcode: "28300",
+    city: "",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Cameron Highland",
+    address: "Ibupejabat Polis Daerah, Cameron Highland Tanah, Rata, Polis Diraja Malaysia",
+    postcode: "39000",
+    city: "",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Jerantut",
+    address: "Ibupejabat Polis Daerah Jerantut, Polis Diraja Malaysia",
+    postcode: "27000",
+    city: "Jerantut",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Lipis",
+    address: "Ibupejabat Polis Daerah Lipis, Polis Diraja Malaysia",
+    postcode: "27200",
+    city: "Kuala Lipis",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuantan",
+    address: "Ibupejabat Polis Daerah Kuantan, Polis Diraja Malaysia, Jalan Mahkota",
+    postcode: "25000",
+    city: "Kuantan",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Maran",
+    address: "Ibupejabat Polis Daerah Maran, Polis Diraja Malaysia",
+    postcode: "26500",
+    city: "Maran",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Pekan",
+    address: "Ibupejabat Polis Daerah Pekan, Polis Diraja Malaysia",
+    postcode: "26600",
+    city: "Pekan",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Raub",
+    address: "Ibupejabat Polis Daerah Raub, Polis Diraja Malaysia",
+    postcode: "27600",
+    city: "Raub",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Rompin",
+    address: "Ibupejabat Polis Daerah Rompin, Polis Diraja Malaysia",
+    postcode: "26800",
+    city: "K. Rompin",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Temerloh",
+    address: "",
+    postcode: "28000",
+    city: "Temerloh",
+    state: "Pahang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Batu Gajah",
+    address: "Ibu Pejabat Polis Daerah Batu Gajah",
+    postcode: "31000",
+    city: "Batu Gajah",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Gerik",
+    address: "Ibu Pejabat Polis Daerah Gerik, Polis Diraja Malaysia, Jalan Sultan Yusof",
+    postcode: "33300",
+    city: "Gerik",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Hilir Perak",
+    address: "Ibu Pejabat Polis Daerah Hilir Perak, Polis Diraja Malaysia",
+    postcode: "36000",
+    city: "Teluk Intan",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Ipoh",
+    address: "Ibu Pejabat Polis Daerah Ipoh, Polis Diraja Malaysia, Jalan Panglima Bukit Gantang Wahab",
+    postcode: "30000",
+    city: "Ipoh",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kampar",
+    address: "Ibu Pejabat Polis Daerah Kampar, Polis Diraja Malaysia",
+    postcode: "31950",
+    city: "Kampar",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kerian",
+    address: "Ibu Pejabat Polis Daerah Kerian, Polis Diraja Malaysia",
+    postcode: "34300",
+    city: "Bagan Serai",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Kangsar",
+    address: "Ibu Pejabat Polis Daerah Kuala Kangsar, Polis Diraja Malaysia, Jalan Raja Chulan",
+    postcode: "33000",
+    city: "Kuala Kangsar",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Manjung",
+    address: "Ibu Pejabat Polis Daerah Manjung, Polis Diraja Malaysia",
+    postcode: "32200",
+    city: "Lumut",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Marin Kg Ache",
+    address: "Pengkalan Polis Marin Kg Acheh",
+    postcode: "32000",
+    city: "Sitiawan",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Muallim",
+    address: "Ibu Pejabat Polis Daerah Muallim, Polis Diraja Malaysia",
+    postcode: "35800",
+    city: "Slim River",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Pengkalan Hulu",
+    address: "Ibu Pejabat Polis Daerah Pengkalan Hulu, Polis Diraja Malaysia",
+    postcode: "33100",
+    city: "Pengkalan Hulu",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Perak Tengah",
+    address: "Ibu Pejabat Polis Daerah Perak Tengah, Polis Diraja Malaysia",
+    postcode: "32800",
+    city: "Parit",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Psp Unit, Ipoh",
+    address: "Pasukan Simpanan Persekutuan Unit 5",
+    postcode: "30450",
+    city: "Ipoh",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Selama",
+    address: "Ibu Pejabat Polis Daerah Selama, Polis Diraja Malaysia",
+    postcode: "34100",
+    city: "Selama",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Sungai Siput",
+    address: "Ibu Pejabat Polis Daerah Sungai Siput, Polis Diraja Malaysia",
+    postcode: "31100",
+    city: "Sungai Siput Utara",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Taiping",
+    address: "Ibu Pejabat Polis Daerah Taiping, Polis Diraja Malaysia, Jln Taming Sari",
+    postcode: "34000",
+    city: "Taiping",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Tapah",
+    address: "Ibu Pejabat Polis Daerah Tapah, Polis Diraja Malaysia",
+    postcode: "35000",
+    city: "Perak",
+    state: "Perak"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Arau",
+    address: "",
+    postcode: "02600",
+    city: "Arau",
+    state: "Perlis"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kangar",
+    address: "",
+    postcode: "01000",
+    city: "Kangar",
+    state: "Perlis"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Padang Besar",
+    address: "Ibupejabat Polis Daerah, Padang Besar, Polis Diraja Malaysia",
+    postcode: "02100",
+    city: "Padang Besar",
+    state: "Perlis"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Barat Daya",
+    address: "Ibupejabat Polis Daerah Barat Daya, Polis Diraja Malaysia",
+    postcode: "11000",
+    city: "Balik Pulau",
+    state: "Pulau Pinang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Seberang Perai Selatan",
+    address: "Ibupejabat Polis Daerah, Seberang Perai Selatan, Polis Diraja Malaysia",
+    postcode: "14200",
+    city: "Sungai Jawi",
+    state: "Pulau Pinang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Seberang Perai Tengah",
+    address: "Ibupejabat Polis Daerah, Seberang Perai Tengah, Polis Diraja Malaysia",
+    postcode: "14000",
+    city: "Bukit Mertajam",
+    state: "Pulau Pinang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Seberang Perai Utara",
+    address: "Ibupejabat Polis Daerah, Seberang Perai Utara, Polis Diraja Malaysia, Jln. Bertam 1",
+    postcode: "13200",
+    city: "Pulau Pinang",
+    state: "Pulau Pinang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Timur Laut",
+    address: "Ibupejabat Polis Daerah, Timur Laut, Polis Diraja Malaysia",
+    postcode: "10760",
+    city: "Jln Penang,Timur Laut",
+    state: "Pulau Pinang"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Ampang Jaya",
+    address: "Ibu Pejabat Polis Daerah Ampang, Taman Dagang",
+    postcode: "68000",
+    city: "Ampang",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Gombak",
+    address: "Ibupejabat Polis Daerah Gombak, Polis Diraja Malaysia",
+    postcode: "53100",
+    city: "Gombak",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Hulu Selangor",
+    address: "Ibupejabat Polis Daerah Hulu Selangor, Polis Diraja Malaysia",
+    postcode: "44000",
+    city: "Kuala Kubu Bahru",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kajang",
+    address: "Ibu Pejabat Polis Daerah Kajang, Polis Diraja Malaysia",
+    postcode: "43000",
+    city: "Kajang",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Klang Selatan",
+    address: "Ibupejabat Polis Daerah Klang Selatan, Jln Gedung Raja Abdullah",
+    postcode: "41560",
+    city: "Selangor",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Klang Utara",
+    address: "Ibu Pejabat Polis Daerah Klang Utara, Polis Diraja Malaysia, Jalan Harapan, 3A/KU7 Taman Sg Kapar Indah",
+    postcode: "42200",
+    city: "",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Langat",
+    address: "Ibupejabat Polis Daerah Kuala Langat, Jalan Sultan Alam Shah",
+    postcode: "42700",
+    city: "Banting",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Selangor",
+    address: "Ibupejabat Polis Daerah, Kuala Selangor, Polis Diraja Malaysia",
+    postcode: "45000",
+    city: "Kuala",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Petaling Jaya",
+    address: "Ibupejabat Polis DaerahPetaling Jaya, Polis Diraja Malaysia, Petaling Jaya, Jalan Pencala",
+    postcode: "46050",
+    city: "",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Sabak Bernam",
+    address: "Ibupejabat Polis Daerah, Sabak Bernam",
+    postcode: "45300",
+    city: "Sungai Besar",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Sepang",
+    address: "Ibupejabat Polis Daerah Sepang, Polis Diraja Malaysia",
+    postcode: "43900",
+    city: "Sepang",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Serdang",
+    address: "Ibu Pejabat Polis Daerah Serdang, Jalan Kinrara 6, Bandar Kinrara 6",
+    postcode: "47180",
+    city: "Puchong",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Shah Alam",
+    address: "Ibupejabat Polis Daerah Shah Alam, Persiaran Kayangan, Seksyen 9",
+    postcode: "40100",
+    city: "",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Subang Jaya",
+    address: "Ibu Pejabat Polis Daerah Subang Jaya, Balai Polis USJ 8, Persiaran Kewajipan",
+    postcode: "47610",
+    city: "",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Sungai Buluh",
+    address: "Ibu Pejabat Polis Daerah Sg Buluh, Polis Diraja Malaysia",
+    postcode: "47000",
+    city: "Sungai Buloh, Selangor",
+    state: "Selangor"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Dungun",
+    address: "Ibupejabat Polis Daerah Dungun, Polis Diraja Malaysia, Jalan Yahya Ahmad",
+    postcode: "23000",
+    city: "Dungun",
+    state: "Terengganu"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Hulu Terrenganu",
+    address: "Ibupejabat Polis Daerah Hulu Terengganu, Polis Diraja Malaysia",
+    postcode: "21700",
+    city: "Kuala Berang",
+    state: "Terengganu"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kemaman",
+    address: "Ibupejabat Polis Daerah Kemaman, Polis Diraja Malaysia, Jalan Air Putih",
+    postcode: "24000",
+    city: "Kemaman",
+    state: "Terengganu"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Kuala Terengganu",
+    address: "Ibupejabat Polis Daerah Kuala Terengganu, Polis Diraja Malaysia, Jln Sultan Omar",
+    postcode: "20918",
+    city: "Kuala",
+    state: "Terengganu"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Marang",
+    address: "Ibupejabat Polis Daerah Marang, Polis Diraja Malaysia",
+    postcode: "21600",
+    city: "Marang",
+    state: "Terengganu"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Setiu",
+    address: "Ibupejabat Polis Daerah Setiu, Polis Diraja Malaysia, Kg Apek",
+    postcode: "22100",
+    city: "Bandar Permaisuri",
+    state: "Terengganu"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Cheras",
+    address: "Ibu Pejabat Polis Daerah Cheras, Lot 36 Jalan Cheras",
+    postcode: "56100",
+    city: "Kuala Lumpur",
+    state: "Wilayah Persekutuan Kuala Lumpur"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Brickfields",
+    address: "Ibu Pejabat Polis Daerah Brickfields, No. 12, Jalan Travers",
+    postcode: "50480",
+    city: "Kuala Lumpur",
+    state: "Wilayah Persekutuan Kuala Lumpur"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Dang Wangi",
+    address: "Ibu Pejabat Polis Daerah Dang Wangi, Jalan Dang Wangi",
+    postcode: "50100",
+    city: "Kuala Lumpur",
+    state: "Wilayah Persekutuan Kuala Lumpur"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Sentul",
+    address: "Ibu Pejabat Polis Daerah Sentul, Jinjang",
+    postcode: "51200",
+    city: "Kuala Lumpur",
+    state: "Wilayah Persekutuan Kuala Lumpur"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Wangsa Maju",
+    address: "Ibu Pejabat Polis Daerah Wangsa Maju, Polis Diraja Malaysia, Jalan Pudu",
+    postcode: "55100",
+    city: "Kuala Lumpur",
+    state: "Wilayah Persekutuan Kuala Lumpur"
+  },
+  {
+    name: "Ibu Pejabat Polis Daerah Putrajaya",
+    address: "Ibupejabat Polis Daerah Putrajaya",
+    postcode: "65200",
+    city: "Putrajaya",
+    state: "Wilayah Persekutuan Putrajaya"
+  }
 ];
 const countryCodes = [
   { value: "60", label: "+60 (MY)" },
@@ -8631,19 +9380,11 @@ const countryCodes = [
   { value: "62", label: "+62 (ID)" },
   { value: "66", label: "+66 (TH)" }
 ];
-const applicationTypes = [
-  { value: "deepavali", label: "Deepavali" },
-  { value: "cny", label: "Chinese New Year" },
-  { value: "raya", label: "Hari Raya" },
-  { value: "merdeka", label: "Hari Merdeka" },
-  { value: "wedding", label: "Majlis Kahwin" },
-  { value: "corporate", label: "Acara Korporat" },
-  { value: "other", label: "Lain-lain" }
-];
 const PermitPDRM = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [generatedPdf, setGeneratedPdf] = useState(null);
+  const [lastSubmission, setLastSubmission] = useState(null);
   const [formData, setFormData] = useState({
-    applicationType: "",
     fullName: "",
     icNumber: "",
     occupation: "",
@@ -8651,76 +9392,115 @@ const PermitPDRM = () => {
     phone: "",
     addressLine1: "",
     addressLine2: "",
-    city: "",
-    postcode: "",
-    state: "",
-    companyName: "",
-    companySsm: "",
-    applicationDate: void 0,
-    businessLocation: "",
-    businessAddress1: "",
-    businessAddress2: "",
-    businessState: "",
-    ipdName: ""
+    addressLine3: "",
+    companyName: "BM FIREWORKS SDN. BHD.",
+    // Pre-filled
+    businessAddressLine1: "",
+    businessAddressLine2: "",
+    businessAddressLine3: "",
+    selectedIpdId: "",
+    ipdLine1: "",
+    ipdLine2: "",
+    ipdLine3: "",
+    ipdLine4: "",
+    ipdLine5: "",
+    applicationDate: void 0
   });
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+  const handleIpdSelect = (ipdId) => {
+    const selectedIpd = ipdList.find((ipd, index) => index.toString() === ipdId);
+    if (selectedIpd) {
+      setFormData((prev) => ({
+        ...prev,
+        selectedIpdId: ipdId,
+        ipdLine1: selectedIpd.name,
+        ipdLine2: selectedIpd.address,
+        ipdLine3: `${selectedIpd.postcode} ${selectedIpd.city}`,
+        ipdLine4: selectedIpd.state,
+        ipdLine5: ""
+        // Optional extra line
+      }));
+    }
+  };
   const handleSubmit = async (e) => {
+    var _a, _b;
     e.preventDefault();
-    if (!formData.applicationType || !formData.fullName || !formData.icNumber || !formData.phone || !formData.companyName || !formData.companySsm || !formData.applicationDate) {
+    if (!formData.fullName || !formData.icNumber || !formData.phone || !formData.addressLine1 || !formData.ipdLine1 || !formData.applicationDate) {
       toast$1.error("Sila lengkapkan semua medan wajib (*)");
       return;
     }
     setIsSubmitting(true);
+    setGeneratedPdf(null);
+    setLastSubmission(null);
     try {
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, "")}`;
-      const formattedDate = formData.applicationDate ? format(formData.applicationDate, "dd/MM/yyyy") : "";
+      const backendDate = formData.applicationDate ? format(formData.applicationDate, "yyyy-MM-dd") : "";
+      const addressLine23 = [formData.addressLine2, formData.addressLine3].filter((line) => line.trim()).join(" ");
+      const businessAddressLine23 = [formData.businessAddressLine2, formData.businessAddressLine3].filter((line) => line.trim()).join(" ");
       const payload = {
-        applicationType: formData.applicationType,
+        // BM Fireworks specific fields (will be used by template)
         fullName: formData.fullName,
         icNumber: formData.icNumber,
         occupation: formData.occupation,
         phone: fullPhone,
         addressLine1: formData.addressLine1,
-        addressLine2: formData.addressLine2,
-        city: formData.city,
-        postcode: formData.postcode,
-        state: formData.state,
+        addressLine23,
+        // Combined lines 2+3
         companyName: formData.companyName,
-        companySsm: formData.companySsm,
-        applicationDate: formattedDate,
-        businessLocation: formData.businessLocation,
-        businessAddress1: formData.businessAddress1,
-        // Add trailing space to fix concatenation spacing in PDF output
-        businessAddress2: formData.businessAddress2 ? formData.businessAddress2.trim() + " " : "",
-        businessState: formData.businessState,
-        ipdName: formData.ipdName
+        businessAddressLine1: formData.businessAddressLine1,
+        businessAddressLine23,
+        // Combined lines 2+3
+        ipdLine1: formData.ipdLine1,
+        ipdLine2: formData.ipdLine2,
+        ipdLine3: formData.ipdLine3,
+        ipdLine4: formData.ipdLine4,
+        ipdLine5: formData.ipdLine5,
+        applicationDate: backendDate,
+        // YYYY-MM-DD format for backend
+        // Required GRK fields for validation (use proper values)
+        addressLine2: "",
+        city: formData.ipdLine4 || "Johor",
+        // Use IPD state as city fallback
+        postcode: ((_b = (_a = formData.ipdLine3) == null ? void 0 : _a.match(/\d{5}/)) == null ? void 0 : _b[0]) || "80000",
+        // Extract postcode from ipdLine3
+        state: formData.ipdLine4 || "Johor",
+        companySsm: "202300000000",
+        // Dummy SSM for validation
+        businessLocation: formData.businessAddressLine1 || "Tapak Perniagaan",
+        businessAddress1: formData.businessAddressLine1 || "Tapak Perniagaan",
+        businessAddress2: "",
+        businessState: formData.ipdLine4 || "Johor",
+        ipd: formData.ipdLine1,
+        // Use IPD name
+        countryCode: formData.countryCode
       };
-      const response = await fetch("https://bmfirework.com:3001/api/generate-permit", {
+      const response = await fetch("http://84.247.150.90:4001/api/pdf-orders", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "X-API-Key": "bmf_prod_7UWZO8xLyEPLjj5+VPT2KuuS4vWi247VVzfvvfHvqIc="
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          ...payload,
+          templates: ["bmfireworks-surat-lantikan-cny", "bmfireworks-borang-ipd"]
+        })
       });
       if (!response.ok) {
-        throw new Error("Gagal menjana dokumen permit");
+        const errorData = await response.json().catch(() => null);
+        console.error("Backend error:", errorData);
+        throw new Error("Gagal menjana dokumen PDF");
       }
       const result = await response.json();
-      if (result.pdfUrl) {
-        window.open(result.pdfUrl, "_blank");
-        toast$1.success("Dokumen permit berjaya dijana!");
+      if (result.status === "success" && result.files && result.files.length > 0) {
+        const mergedPdf = result.files.find((f) => f.name.includes("merged")) || result.files[0];
+        const submissionMessage = `Hi BMFireworks! Saya ${formData.fullName}. Saya dah download Surat Lantikan Agent dan Borang IPD. Nak proceed dengan permohonan. No telefon: ${fullPhone}`;
+        setGeneratedPdf({ url: mergedPdf.url, name: mergedPdf.name });
+        setLastSubmission({ fullName: formData.fullName, fullPhone, message: submissionMessage });
+        toast$1.success("Dokumen berjaya dijana. Muat turun PDF dan hubungi kami melalui WhatsApp.");
       }
-      setTimeout(() => {
-        var _a;
-        const stateLabel = ((_a = states.find((s) => s.value === formData.state)) == null ? void 0 : _a.label) || formData.state;
-        const message = `Hi BMFireworks! Saya ${formData.fullName} dari ${stateLabel}. Saya dah isi borang permohonan permit untuk ${formData.applicationType}. Boleh bantu proses? No telefon: ${fullPhone}`;
-        const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
-        window.open(waUrl, "_blank");
-      }, 1e3);
       setFormData({
-        applicationType: "",
         fullName: "",
         icNumber: "",
         occupation: "",
@@ -8728,56 +9508,48 @@ const PermitPDRM = () => {
         phone: "",
         addressLine1: "",
         addressLine2: "",
-        city: "",
-        postcode: "",
-        state: "",
-        companyName: "",
-        companySsm: "",
-        applicationDate: void 0,
-        businessLocation: "",
-        businessAddress1: "",
-        businessAddress2: "",
-        businessState: "",
-        ipdName: ""
+        addressLine3: "",
+        companyName: "BM FIREWORKS SDN. BHD.",
+        businessAddressLine1: "",
+        businessAddressLine2: "",
+        businessAddressLine3: "",
+        selectedIpdId: "",
+        ipdLine1: "",
+        ipdLine2: "",
+        ipdLine3: "",
+        ipdLine4: "",
+        ipdLine5: "",
+        applicationDate: void 0
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast$1.error("Maaf, ada masalah semasa hantar borang. Sila cuba lagi.");
+      toast$1.error("Maaf, ada masalah semasa jana dokumen. Sila cuba lagi.");
     } finally {
       setIsSubmitting(false);
     }
   };
+  const handleDownloadPdf = () => {
+    if (!generatedPdf) return;
+    window.open(generatedPdf.url, "_blank", "noopener");
+  };
+  const handleOpenWhatsApp = () => {
+    if (!lastSubmission) return;
+    const messageLines = [
+      lastSubmission.message,
+      generatedPdf ? `Dokumen: ${generatedPdf.url}` : ""
+    ].filter(Boolean);
+    const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(messageLines.join("\n"))}`;
+    window.open(waUrl, "_blank", "noopener");
+  };
   return /* @__PURE__ */ jsx("div", { className: "min-h-screen py-16 bg-gradient-to-br from-amber-50 via-green-50 to-amber-50", children: /* @__PURE__ */ jsxs("div", { className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8", children: [
     /* @__PURE__ */ jsxs("div", { className: "text-center mb-12", children: [
-      /* @__PURE__ */ jsx("span", { className: "inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300", children: "Surat Lantikan Agent" }),
-      /* @__PURE__ */ jsx("h1", { className: "mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-green-700 to-amber-700 bg-clip-text text-transparent", children: "Satu Borang Untuk Semua Dokumen PDRM" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg text-slate-700 max-w-2xl mx-auto", children: "Isi maklumat perniagaan anda sekali sahaja. Sistem BMFireworks akan auto isi 3-5 dokumen wajib (Surat Lantikan Agent, Borang IPD, Borang PBT) dan simpan dengan selamat." })
+      /* @__PURE__ */ jsx("span", { className: "inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300", children: "Surat Lantikan Agent CNY 2026" }),
+      /* @__PURE__ */ jsx("h1", { className: "mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-green-700 to-amber-700 bg-clip-text text-transparent", children: "Auto Jana Surat Lantikan + Borang IPD" }),
+      /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg text-slate-700 max-w-2xl mx-auto", children: "Isi maklumat sekali, dapat 2 dokumen lengkap siap diisi. Surat Lantikan Agent dan Borang Permohonan IPD untuk permohonan permit mercun Chinese New Year 2026." })
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "rounded-lg border border-green-300 bg-white shadow-2xl", children: [
       /* @__PURE__ */ jsx("div", { className: "flex flex-col space-y-1.5 p-6 border-b border-green-200 bg-gradient-to-r from-green-50 to-amber-50", children: /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold text-amber-900", children: "Maklumat Pemohon & Perniagaan" }) }),
       /* @__PURE__ */ jsx("form", { onSubmit: handleSubmit, className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "space-y-10", children: [
-        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Jenis Permohonan" }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pilih jenis permohonan berdasarkan perayaan yang anda mohon." })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ jsx(Label, { htmlFor: "applicationType", children: "Permohonan Untuk *" }),
-            /* @__PURE__ */ jsxs(
-              Select,
-              {
-                value: formData.applicationType,
-                onValueChange: (value) => handleInputChange("applicationType", value),
-                children: [
-                  /* @__PURE__ */ jsx(SelectTrigger, { id: "applicationType", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih jenis permohonan" }) }),
-                  /* @__PURE__ */ jsx(SelectContent, { children: applicationTypes.map((type) => /* @__PURE__ */ jsx(SelectItem, { value: type.value, children: type.label }, type.value)) })
-                ]
-              }
-            ),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Sistem akan auto isi Surat Lantikan Agent yang bersesuaian dengan jenis permohonan." })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
         /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Pemohon" }),
@@ -8859,7 +9631,7 @@ const PermitPDRM = () => {
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "grid gap-6", children: [
             /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine1", children: "Alamat Rumah 1 *" }),
+              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine1", children: "Alamat Rumah (Baris 1) *" }),
               /* @__PURE__ */ jsx(
                 Input,
                 {
@@ -8871,57 +9643,29 @@ const PermitPDRM = () => {
               )
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine2", children: "Alamat Rumah 2" }),
+              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine2", children: "Alamat Rumah (Baris 2)" }),
               /* @__PURE__ */ jsx(
                 Input,
                 {
                   id: "addressLine2",
-                  placeholder: "Taman Harmoni, Mukim Tebrau",
+                  placeholder: "Taman Harmoni",
                   value: formData.addressLine2,
                   onChange: (e) => handleInputChange("addressLine2", e.target.value)
                 }
               )
             ] }),
-            /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-3", children: [
-              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-                /* @__PURE__ */ jsx(Label, { htmlFor: "city", children: "Bandar *" }),
-                /* @__PURE__ */ jsx(
-                  Input,
-                  {
-                    id: "city",
-                    placeholder: "Johor Bahru",
-                    value: formData.city,
-                    onChange: (e) => handleInputChange("city", e.target.value)
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-                /* @__PURE__ */ jsx(Label, { htmlFor: "postcode", children: "Poskod *" }),
-                /* @__PURE__ */ jsx(
-                  Input,
-                  {
-                    id: "postcode",
-                    placeholder: "81100",
-                    maxLength: 5,
-                    value: formData.postcode,
-                    onChange: (e) => handleInputChange("postcode", e.target.value)
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-                /* @__PURE__ */ jsx(Label, { htmlFor: "state", children: "Negeri *" }),
-                /* @__PURE__ */ jsxs(
-                  Select,
-                  {
-                    value: formData.state,
-                    onValueChange: (value) => handleInputChange("state", value),
-                    children: [
-                      /* @__PURE__ */ jsx(SelectTrigger, { id: "state", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih negeri" }) }),
-                      /* @__PURE__ */ jsx(SelectContent, { children: states.map((state) => /* @__PURE__ */ jsx(SelectItem, { value: state.value, children: state.label }, state.value)) })
-                    ]
-                  }
-                )
-              ] })
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "addressLine3", children: "Alamat Rumah (Baris 3)" }),
+              /* @__PURE__ */ jsx(
+                Input,
+                {
+                  id: "addressLine3",
+                  placeholder: "81100 Johor Bahru, Johor",
+                  value: formData.addressLine3,
+                  onChange: (e) => handleInputChange("addressLine3", e.target.value)
+                }
+              ),
+              /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Baris 2 dan 3 akan digabungkan secara automatik dalam PDF." })
             ] })
           ] })
         ] }),
@@ -8929,33 +9673,20 @@ const PermitPDRM = () => {
         /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Syarikat" }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Maklumat ini digunakan untuk surat lantikan dan dokumen sokongan." })
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Nama syarikat pembekal mercun (auto diisi untuk BM Fireworks)." })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2", children: [
-            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "companyName", children: "Nama Syarikat (SSM) *" }),
-              /* @__PURE__ */ jsx(
-                Input,
-                {
-                  id: "companyName",
-                  placeholder: "BMFireworks Enterprise",
-                  value: formData.companyName,
-                  onChange: (e) => handleInputChange("companyName", e.target.value)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "companySsm", children: "No. SSM *" }),
-              /* @__PURE__ */ jsx(
-                Input,
-                {
-                  id: "companySsm",
-                  placeholder: "202401234567",
-                  value: formData.companySsm,
-                  onChange: (e) => handleInputChange("companySsm", e.target.value)
-                }
-              )
-            ] })
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsx(Label, { htmlFor: "companyName", children: "Nama Syarikat Pembekal *" }),
+            /* @__PURE__ */ jsx(
+              Input,
+              {
+                id: "companyName",
+                value: formData.companyName,
+                disabled: true,
+                className: "bg-slate-100"
+              }
+            ),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Syarikat pembekal telah ditetapkan sebagai BM FIREWORKS SDN. BHD." })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-w-sm", children: [
             /* @__PURE__ */ jsx(Label, { children: "Tarikh Permohonan *" }),
@@ -8989,73 +9720,104 @@ const PermitPDRM = () => {
         /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
         /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Tapak Perniagaan" }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pilih negeri tapak berniaga dan IPD yang menjaga kawasan tersebut." })
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Alamat Premis Perniagaan" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Alamat tapak/gerai yang akan digunakan untuk berniaga mercun." })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "grid gap-6", children: [
             /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "businessLocation", children: "Tempat Berniaga *" }),
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddressLine1", children: "Alamat Premis (Baris 1) *" }),
               /* @__PURE__ */ jsx(
                 Input,
                 {
-                  id: "businessLocation",
-                  placeholder: "cth: Tapak Pasaraya Lotus, Desa Cemerlang",
-                  value: formData.businessLocation,
-                  onChange: (e) => handleInputChange("businessLocation", e.target.value)
+                  id: "businessAddressLine1",
+                  placeholder: "No Lot/Gerai, Nama Tapak",
+                  value: formData.businessAddressLine1,
+                  onChange: (e) => handleInputChange("businessAddressLine1", e.target.value)
                 }
               )
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddress1", children: "Alamat Berniaga 1 *" }),
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddressLine2", children: "Alamat Premis (Baris 2)" }),
               /* @__PURE__ */ jsx(
                 Input,
                 {
-                  id: "businessAddress1",
-                  placeholder: "No Lot / Gerai",
-                  value: formData.businessAddress1,
-                  onChange: (e) => handleInputChange("businessAddress1", e.target.value)
+                  id: "businessAddressLine2",
+                  placeholder: "Jalan/Taman",
+                  value: formData.businessAddressLine2,
+                  onChange: (e) => handleInputChange("businessAddressLine2", e.target.value)
                 }
               )
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddress2", children: "Alamat Berniaga 2" }),
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddressLine3", children: "Alamat Premis (Baris 3)" }),
               /* @__PURE__ */ jsx(
-                Textarea,
+                Input,
                 {
-                  id: "businessAddress2",
-                  placeholder: "Tambahan alamat seperti taman, landmark, atau maklumat lokasi",
-                  rows: 3,
-                  value: formData.businessAddress2,
-                  onChange: (e) => handleInputChange("businessAddress2", e.target.value)
+                  id: "businessAddressLine3",
+                  placeholder: "Poskod, Bandar, Negeri",
+                  value: formData.businessAddressLine3,
+                  onChange: (e) => handleInputChange("businessAddressLine3", e.target.value)
                 }
-              )
+              ),
+              /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Baris 2 dan 3 akan digabungkan secara automatik dalam PDF." })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
+        /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat IPD" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pilih Ibu Pejabat Polis Daerah (IPD) yang menjaga kawasan premis perniagaan anda." })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "selectedIpd", children: "Pilih IPD *" }),
+              /* @__PURE__ */ jsxs(
+                Select,
+                {
+                  value: formData.selectedIpdId,
+                  onValueChange: handleIpdSelect,
+                  children: [
+                    /* @__PURE__ */ jsx(SelectTrigger, { id: "selectedIpd", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih IPD dari senarai" }) }),
+                    /* @__PURE__ */ jsx(SelectContent, { className: "max-h-[300px]", children: ipdList.map((ipd, index) => /* @__PURE__ */ jsxs(SelectItem, { value: index.toString(), children: [
+                      ipd.name,
+                      " - ",
+                      ipd.city,
+                      ", ",
+                      ipd.state
+                    ] }, index)) })
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxs("p", { className: "text-sm text-slate-600", children: [
+                "Pilih dari senarai ",
+                ipdList.length,
+                " IPD di Semenanjung Malaysia. Maklumat akan auto diisi."
+              ] })
             ] }),
-            /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-2", children: [
-              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-                /* @__PURE__ */ jsx(Label, { htmlFor: "businessState", children: "Negeri Tapak *" }),
-                /* @__PURE__ */ jsxs(
-                  Select,
-                  {
-                    value: formData.businessState,
-                    onValueChange: (value) => handleInputChange("businessState", value),
-                    children: [
-                      /* @__PURE__ */ jsx(SelectTrigger, { id: "businessState", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih negeri" }) }),
-                      /* @__PURE__ */ jsx(SelectContent, { children: states.map((state) => /* @__PURE__ */ jsx(SelectItem, { value: state.value, children: state.label }, state.value)) })
-                    ]
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-                /* @__PURE__ */ jsx(Label, { htmlFor: "ipdName", children: "Nama IPD *" }),
-                /* @__PURE__ */ jsx(
-                  Input,
-                  {
-                    id: "ipdName",
-                    placeholder: "cth: IPD Johor Bahru Selatan",
-                    value: formData.ipdName,
-                    onChange: (e) => handleInputChange("ipdName", e.target.value)
-                  }
-                )
+            formData.ipdLine1 && /* @__PURE__ */ jsxs("div", { className: "p-4 bg-green-50 border border-green-200 rounded-lg space-y-3", children: [
+              /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold text-green-800", children: "Maklumat IPD (Auto Diisi):" }),
+              /* @__PURE__ */ jsxs("div", { className: "grid gap-2 text-sm", children: [
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsx("span", { className: "font-medium", children: "Nama:" }),
+                  " ",
+                  formData.ipdLine1
+                ] }),
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsx("span", { className: "font-medium", children: "Alamat:" }),
+                  " ",
+                  formData.ipdLine2
+                ] }),
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsx("span", { className: "font-medium", children: "Poskod/Bandar:" }),
+                  " ",
+                  formData.ipdLine3
+                ] }),
+                /* @__PURE__ */ jsxs("div", { children: [
+                  /* @__PURE__ */ jsx("span", { className: "font-medium", children: "Negeri:" }),
+                  " ",
+                  formData.ipdLine4
+                ] })
               ] })
             ] })
           ] })
@@ -9069,14 +9831,47 @@ const PermitPDRM = () => {
               className: "w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white h-12 text-lg",
               children: isSubmitting ? /* @__PURE__ */ jsxs(Fragment, { children: [
                 /* @__PURE__ */ jsx(Loader2, { className: "mr-2 h-5 w-5 animate-spin" }),
-                "Sedang Proses..."
+                "Sedang Jana PDF..."
               ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
                 /* @__PURE__ */ jsx(Download, { className: "mr-2 h-5 w-5" }),
-                "Jana Surat Lantikan Agent"
+                "Jana Surat Lantikan + Borang IPD"
               ] })
             }
           ),
-          /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600 text-center mt-4", children: "Dengan klik butang di atas, Surat Lantikan Agent akan dijana dan anda akan dihubungkan ke WhatsApp kami." })
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600 text-center mt-4", children: "Klik butang untuk auto jana 2 dokumen: Surat Lantikan Agent dan Borang Permohonan IPD. Selepas siap, butang muat turun dan WhatsApp akan muncul di bawah." })
+        ] }),
+        generatedPdf && lastSubmission && /* @__PURE__ */ jsxs("div", { className: "mt-8 border border-green-200 bg-green-50 rounded-lg p-6 space-y-3", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-lg font-semibold text-green-900", children: "Dokumen Sedia Dimuat Turun" }),
+            /* @__PURE__ */ jsxs("p", { className: "text-sm text-green-800", children: [
+              "Surat Lantikan Agent dan Borang IPD untuk ",
+              lastSubmission.fullName,
+              " berjaya dijana. Sila muat turun PDF dan hubungi kami untuk proses seterusnya."
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row gap-3", children: [
+            /* @__PURE__ */ jsxs(Button, { onClick: handleDownloadPdf, className: "bg-green-600 hover:bg-green-700 text-white", children: [
+              /* @__PURE__ */ jsx(Download, { className: "h-4 w-4 mr-2" }),
+              "Muat Turun PDF"
+            ] }),
+            /* @__PURE__ */ jsxs(
+              Button,
+              {
+                type: "button",
+                variant: "outline",
+                onClick: handleOpenWhatsApp,
+                className: "border-green-600 text-green-700 hover:bg-green-100",
+                children: [
+                  /* @__PURE__ */ jsx(MessageCircle, { className: "h-4 w-4 mr-2" }),
+                  "WhatsApp BMFireworks"
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxs("p", { className: "text-xs text-green-700", children: [
+            "Nota: Salin link dokumen ini jika perlu simpan atau kongsikan: ",
+            /* @__PURE__ */ jsx("span", { className: "underline break-all", children: generatedPdf.url })
+          ] })
         ] })
       ] }) })
     ] }),

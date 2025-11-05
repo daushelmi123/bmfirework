@@ -20,6 +20,18 @@ import { format } from 'date-fns';
 import { CalendarIcon, Loader2, Download, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import ipdList from '@/data/ipd-list.json';
+
+type GeneratedPdf = {
+  url: string;
+  name: string;
+};
+
+type SubmissionMeta = {
+  fullName: string;
+  fullPhone: string;
+  message: string;
+};
 
 // Malaysian states
 const states = [
@@ -61,9 +73,6 @@ const applicationTypes = [
 ];
 
 interface FormData {
-  // Application type
-  applicationType: string;
-
   // Personal info
   fullName: string;
   icNumber: string;
@@ -74,27 +83,33 @@ interface FormData {
   // Home address
   addressLine1: string;
   addressLine2: string;
-  city: string;
-  postcode: string;
-  state: string;
+  addressLine3: string;
 
-  // Company info
+  // Company info (pre-filled for BM Fireworks)
   companyName: string;
-  companySsm: string;
-  applicationDate: Date | undefined;
 
-  // Business location
-  businessLocation: string;
-  businessAddress1: string;
-  businessAddress2: string;
-  businessState: string;
-  ipdName: string;
+  // Business address
+  businessAddressLine1: string;
+  businessAddressLine2: string;
+  businessAddressLine3: string;
+
+  // IPD Information
+  selectedIpdId: string; // For dropdown selection
+  ipdLine1: string; // IPD Name
+  ipdLine2: string; // IPD Address
+  ipdLine3: string; // Postcode + City
+  ipdLine4: string; // State
+  ipdLine5: string; // Extra info (optional)
+
+  // Application date
+  applicationDate: Date | undefined;
 }
 
 const PermitPDRM = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [generatedPdf, setGeneratedPdf] = useState<GeneratedPdf | null>(null);
+  const [lastSubmission, setLastSubmission] = useState<SubmissionMeta | null>(null);
   const [formData, setFormData] = useState<FormData>({
-    applicationType: '',
     fullName: '',
     icNumber: '',
     occupation: '',
@@ -102,100 +117,139 @@ const PermitPDRM = () => {
     phone: '',
     addressLine1: '',
     addressLine2: '',
-    city: '',
-    postcode: '',
-    state: '',
-    companyName: '',
-    companySsm: '',
+    addressLine3: '',
+    companyName: 'BM FIREWORKS SDN. BHD.', // Pre-filled
+    businessAddressLine1: '',
+    businessAddressLine2: '',
+    businessAddressLine3: '',
+    selectedIpdId: '',
+    ipdLine1: '',
+    ipdLine2: '',
+    ipdLine3: '',
+    ipdLine4: '',
+    ipdLine5: '',
     applicationDate: undefined,
-    businessLocation: '',
-    businessAddress1: '',
-    businessAddress2: '',
-    businessState: '',
-    ipdName: '',
   });
 
   const handleInputChange = (field: keyof FormData, value: string | Date | undefined) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Handle IPD selection from dropdown
+  const handleIpdSelect = (ipdId: string) => {
+    const selectedIpd = ipdList.find((ipd, index) => index.toString() === ipdId);
+
+    if (selectedIpd) {
+      setFormData((prev) => ({
+        ...prev,
+        selectedIpdId: ipdId,
+        ipdLine1: selectedIpd.name,
+        ipdLine2: selectedIpd.address,
+        ipdLine3: `${selectedIpd.postcode} ${selectedIpd.city}`,
+        ipdLine4: selectedIpd.state,
+        ipdLine5: '', // Optional extra line
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validation
-    if (!formData.applicationType || !formData.fullName || !formData.icNumber ||
-        !formData.phone || !formData.companyName || !formData.companySsm ||
-        !formData.applicationDate) {
+    if (!formData.fullName || !formData.icNumber || !formData.phone ||
+        !formData.addressLine1 || !formData.ipdLine1 || !formData.applicationDate) {
       toast.error('Sila lengkapkan semua medan wajib (*)');
       return;
     }
 
     setIsSubmitting(true);
+    setGeneratedPdf(null);
+    setLastSubmission(null);
 
     try {
       // Format phone number
       const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, '')}`;
 
-      // Format date
-      const formattedDate = formData.applicationDate
-        ? format(formData.applicationDate, 'dd/MM/yyyy')
+      // Format date for backend (YYYY-MM-DD)
+      const backendDate = formData.applicationDate
+        ? format(formData.applicationDate, 'yyyy-MM-dd')
         : '';
 
+      // Combine address lines for backend
+      const addressLine23 = [formData.addressLine2, formData.addressLine3]
+        .filter(line => line.trim())
+        .join(' ');
+
+      const businessAddressLine23 = [formData.businessAddressLine2, formData.businessAddressLine3]
+        .filter(line => line.trim())
+        .join(' ');
+
       // Prepare payload for PDF service
+      // Backend validation expects GRK fields, but template will use BM fields
       const payload = {
-        applicationType: formData.applicationType,
+        // BM Fireworks specific fields (will be used by template)
         fullName: formData.fullName,
         icNumber: formData.icNumber,
         occupation: formData.occupation,
         phone: fullPhone,
         addressLine1: formData.addressLine1,
-        addressLine2: formData.addressLine2,
-        city: formData.city,
-        postcode: formData.postcode,
-        state: formData.state,
+        addressLine23, // Combined lines 2+3
         companyName: formData.companyName,
-        companySsm: formData.companySsm,
-        applicationDate: formattedDate,
-        businessLocation: formData.businessLocation,
-        businessAddress1: formData.businessAddress1,
-        // Add trailing space to fix concatenation spacing in PDF output
-        businessAddress2: formData.businessAddress2 ? formData.businessAddress2.trim() + ' ' : '',
-        businessState: formData.businessState,
-        ipdName: formData.ipdName,
+        businessAddressLine1: formData.businessAddressLine1,
+        businessAddressLine23, // Combined lines 2+3
+        ipdLine1: formData.ipdLine1,
+        ipdLine2: formData.ipdLine2,
+        ipdLine3: formData.ipdLine3,
+        ipdLine4: formData.ipdLine4,
+        ipdLine5: formData.ipdLine5,
+        applicationDate: backendDate, // YYYY-MM-DD format for backend
+
+        // Required GRK fields for validation (use proper values)
+        addressLine2: '',
+        city: formData.ipdLine4 || 'Johor', // Use IPD state as city fallback
+        postcode: formData.ipdLine3?.match(/\d{5}/)?.[0] || '80000', // Extract postcode from ipdLine3
+        state: formData.ipdLine4 || 'Johor',
+        companySsm: '202300000000', // Dummy SSM for validation
+        businessLocation: formData.businessAddressLine1 || 'Tapak Perniagaan',
+        businessAddress1: formData.businessAddressLine1 || 'Tapak Perniagaan',
+        businessAddress2: '',
+        businessState: formData.ipdLine4 || 'Johor',
+        ipd: formData.ipdLine1, // Use IPD name
+        countryCode: formData.countryCode,
       };
 
-      // Call backend proxy (secure - API key hidden server-side)
-      const response = await fetch('https://bmfirework.com:3001/api/generate-permit', {
+      // Call BMFireworks dedicated PDF service (port 4001)
+      const response = await fetch('http://84.247.150.90:4001/api/pdf-orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-API-Key': 'bmf_prod_7UWZO8xLyEPLjj5+VPT2KuuS4vWi247VVzfvvfHvqIc=',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          templates: ['bmfireworks-surat-lantikan-cny', 'bmfireworks-borang-ipd'],
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Gagal menjana dokumen permit');
+        const errorData = await response.json().catch(() => null);
+        console.error('Backend error:', errorData);
+        throw new Error('Gagal menjana dokumen PDF');
       }
 
       const result = await response.json();
 
-      // Download PDF
-      if (result.pdfUrl) {
-        window.open(result.pdfUrl, '_blank');
-        toast.success('Dokumen permit berjaya dijana!');
+      // Open merged PDF in new tab
+      if (result.status === 'success' && result.files && result.files.length > 0) {
+        const mergedPdf = result.files.find((f: any) => f.name.includes('merged')) || result.files[0];
+        const submissionMessage = `Hi BMFireworks! Saya ${formData.fullName}. Saya dah download Surat Lantikan Agent dan Borang IPD. Nak proceed dengan permohonan. No telefon: ${fullPhone}`;
+        setGeneratedPdf({ url: mergedPdf.url, name: mergedPdf.name });
+        setLastSubmission({ fullName: formData.fullName, fullPhone, message: submissionMessage });
+        toast.success('Dokumen berjaya dijana. Muat turun PDF dan hubungi kami melalui WhatsApp.');
       }
-
-      // Redirect to WhatsApp with PDF link
-      setTimeout(() => {
-        const stateLabel = states.find(s => s.value === formData.state)?.label || formData.state;
-        const message = `Hi BMFireworks! Saya ${formData.fullName} dari ${stateLabel}. Saya dah isi borang permohonan permit untuk ${formData.applicationType}. Boleh bantu proses? No telefon: ${fullPhone}`;
-        const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
-        window.open(waUrl, '_blank');
-      }, 1000);
 
       // Reset form
       setFormData({
-        applicationType: '',
         fullName: '',
         icNumber: '',
         occupation: '',
@@ -203,25 +257,41 @@ const PermitPDRM = () => {
         phone: '',
         addressLine1: '',
         addressLine2: '',
-        city: '',
-        postcode: '',
-        state: '',
-        companyName: '',
-        companySsm: '',
+        addressLine3: '',
+        companyName: 'BM FIREWORKS SDN. BHD.',
+        businessAddressLine1: '',
+        businessAddressLine2: '',
+        businessAddressLine3: '',
+        selectedIpdId: '',
+        ipdLine1: '',
+        ipdLine2: '',
+        ipdLine3: '',
+        ipdLine4: '',
+        ipdLine5: '',
         applicationDate: undefined,
-        businessLocation: '',
-        businessAddress1: '',
-        businessAddress2: '',
-        businessState: '',
-        ipdName: '',
       });
 
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error('Maaf, ada masalah semasa hantar borang. Sila cuba lagi.');
+      toast.error('Maaf, ada masalah semasa jana dokumen. Sila cuba lagi.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleDownloadPdf = () => {
+    if (!generatedPdf) return;
+    window.open(generatedPdf.url, '_blank', 'noopener');
+  };
+
+  const handleOpenWhatsApp = () => {
+    if (!lastSubmission) return;
+    const messageLines = [
+      lastSubmission.message,
+      generatedPdf ? `Dokumen: ${generatedPdf.url}` : '',
+    ].filter(Boolean);
+    const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(messageLines.join('\n'))}`;
+    window.open(waUrl, '_blank', 'noopener');
   };
 
   return (
@@ -230,14 +300,14 @@ const PermitPDRM = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300">
-            Surat Lantikan Agent
+            Surat Lantikan Agent CNY 2026
           </span>
           <h1 className="mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-green-700 to-amber-700 bg-clip-text text-transparent">
-            Satu Borang Untuk Semua Dokumen PDRM
+            Auto Jana Surat Lantikan + Borang IPD
           </h1>
           <p className="mt-4 text-lg text-slate-700 max-w-2xl mx-auto">
-            Isi maklumat perniagaan anda sekali sahaja. Sistem BMFireworks akan auto isi 3-5 dokumen wajib
-            (Surat Lantikan Agent, Borang IPD, Borang PBT) dan simpan dengan selamat.
+            Isi maklumat sekali, dapat 2 dokumen lengkap siap diisi. Surat Lantikan Agent dan Borang Permohonan IPD
+            untuk permohonan permit mercun Chinese New Year 2026.
           </p>
         </div>
 
@@ -251,38 +321,6 @@ const PermitPDRM = () => {
 
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <div className="space-y-10">
-              {/* Application Type Section */}
-              <section className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-semibold text-amber-900">Jenis Permohonan</h2>
-                  <p className="text-sm text-slate-600">
-                    Pilih jenis permohonan berdasarkan perayaan yang anda mohon.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="applicationType">Permohonan Untuk *</Label>
-                  <Select
-                    value={formData.applicationType}
-                    onValueChange={(value) => handleInputChange('applicationType', value)}
-                  >
-                    <SelectTrigger id="applicationType">
-                      <SelectValue placeholder="Pilih jenis permohonan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {applicationTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-slate-600">
-                    Sistem akan auto isi Surat Lantikan Agent yang bersesuaian dengan jenis permohonan.
-                  </p>
-                </div>
-              </section>
-
-              <div className="h-[1px] w-full bg-green-200" />
 
               {/* Personal Info Section */}
               <section className="space-y-6">
@@ -367,7 +405,7 @@ const PermitPDRM = () => {
                 </div>
                 <div className="grid gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="addressLine1">Alamat Rumah 1 *</Label>
+                    <Label htmlFor="addressLine1">Alamat Rumah (Baris 1) *</Label>
                     <Input
                       id="addressLine1"
                       placeholder="No 12, Jalan Bunga Api"
@@ -376,52 +414,25 @@ const PermitPDRM = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="addressLine2">Alamat Rumah 2</Label>
+                    <Label htmlFor="addressLine2">Alamat Rumah (Baris 2)</Label>
                     <Input
                       id="addressLine2"
-                      placeholder="Taman Harmoni, Mukim Tebrau"
+                      placeholder="Taman Harmoni"
                       value={formData.addressLine2}
                       onChange={(e) => handleInputChange('addressLine2', e.target.value)}
                     />
                   </div>
-                  <div className="grid gap-6 md:grid-cols-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">Bandar *</Label>
-                      <Input
-                        id="city"
-                        placeholder="Johor Bahru"
-                        value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="postcode">Poskod *</Label>
-                      <Input
-                        id="postcode"
-                        placeholder="81100"
-                        maxLength={5}
-                        value={formData.postcode}
-                        onChange={(e) => handleInputChange('postcode', e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="state">Negeri *</Label>
-                      <Select
-                        value={formData.state}
-                        onValueChange={(value) => handleInputChange('state', value)}
-                      >
-                        <SelectTrigger id="state">
-                          <SelectValue placeholder="Pilih negeri" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {states.map((state) => (
-                            <SelectItem key={state.value} value={state.value}>
-                              {state.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="addressLine3">Alamat Rumah (Baris 3)</Label>
+                    <Input
+                      id="addressLine3"
+                      placeholder="81100 Johor Bahru, Johor"
+                      value={formData.addressLine3}
+                      onChange={(e) => handleInputChange('addressLine3', e.target.value)}
+                    />
+                    <p className="text-sm text-slate-600">
+                      Baris 2 dan 3 akan digabungkan secara automatik dalam PDF.
+                    </p>
                   </div>
                 </div>
               </section>
@@ -433,28 +444,20 @@ const PermitPDRM = () => {
                 <div>
                   <h2 className="text-2xl font-semibold text-amber-900">Maklumat Syarikat</h2>
                   <p className="text-sm text-slate-600">
-                    Maklumat ini digunakan untuk surat lantikan dan dokumen sokongan.
+                    Nama syarikat pembekal mercun (auto diisi untuk BM Fireworks).
                   </p>
                 </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Nama Syarikat (SSM) *</Label>
-                    <Input
-                      id="companyName"
-                      placeholder="BMFireworks Enterprise"
-                      value={formData.companyName}
-                      onChange={(e) => handleInputChange('companyName', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="companySsm">No. SSM *</Label>
-                    <Input
-                      id="companySsm"
-                      placeholder="202401234567"
-                      value={formData.companySsm}
-                      onChange={(e) => handleInputChange('companySsm', e.target.value)}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyName">Nama Syarikat Pembekal *</Label>
+                  <Input
+                    id="companyName"
+                    value={formData.companyName}
+                    disabled
+                    className="bg-slate-100"
+                  />
+                  <p className="text-sm text-slate-600">
+                    Syarikat pembekal telah ditetapkan sebagai BM FIREWORKS SDN. BHD.
+                  </p>
                 </div>
                 <div className="space-y-2 max-w-sm">
                   <Label>Tarikh Permohonan *</Label>
@@ -489,72 +492,93 @@ const PermitPDRM = () => {
 
               <div className="h-[1px] w-full bg-green-200" />
 
-              {/* Business Location Section */}
+              {/* Business Address Section */}
               <section className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-amber-900">Maklumat Tapak Perniagaan</h2>
+                  <h2 className="text-2xl font-semibold text-amber-900">Alamat Premis Perniagaan</h2>
                   <p className="text-sm text-slate-600">
-                    Pilih negeri tapak berniaga dan IPD yang menjaga kawasan tersebut.
+                    Alamat tapak/gerai yang akan digunakan untuk berniaga mercun.
                   </p>
                 </div>
                 <div className="grid gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="businessLocation">Tempat Berniaga *</Label>
+                    <Label htmlFor="businessAddressLine1">Alamat Premis (Baris 1) *</Label>
                     <Input
-                      id="businessLocation"
-                      placeholder="cth: Tapak Pasaraya Lotus, Desa Cemerlang"
-                      value={formData.businessLocation}
-                      onChange={(e) => handleInputChange('businessLocation', e.target.value)}
+                      id="businessAddressLine1"
+                      placeholder="No Lot/Gerai, Nama Tapak"
+                      value={formData.businessAddressLine1}
+                      onChange={(e) => handleInputChange('businessAddressLine1', e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="businessAddress1">Alamat Berniaga 1 *</Label>
+                    <Label htmlFor="businessAddressLine2">Alamat Premis (Baris 2)</Label>
                     <Input
-                      id="businessAddress1"
-                      placeholder="No Lot / Gerai"
-                      value={formData.businessAddress1}
-                      onChange={(e) => handleInputChange('businessAddress1', e.target.value)}
+                      id="businessAddressLine2"
+                      placeholder="Jalan/Taman"
+                      value={formData.businessAddressLine2}
+                      onChange={(e) => handleInputChange('businessAddressLine2', e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="businessAddress2">Alamat Berniaga 2</Label>
-                    <Textarea
-                      id="businessAddress2"
-                      placeholder="Tambahan alamat seperti taman, landmark, atau maklumat lokasi"
-                      rows={3}
-                      value={formData.businessAddress2}
-                      onChange={(e) => handleInputChange('businessAddress2', e.target.value)}
+                    <Label htmlFor="businessAddressLine3">Alamat Premis (Baris 3)</Label>
+                    <Input
+                      id="businessAddressLine3"
+                      placeholder="Poskod, Bandar, Negeri"
+                      value={formData.businessAddressLine3}
+                      onChange={(e) => handleInputChange('businessAddressLine3', e.target.value)}
                     />
+                    <p className="text-sm text-slate-600">
+                      Baris 2 dan 3 akan digabungkan secara automatik dalam PDF.
+                    </p>
                   </div>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="businessState">Negeri Tapak *</Label>
-                      <Select
-                        value={formData.businessState}
-                        onValueChange={(value) => handleInputChange('businessState', value)}
-                      >
-                        <SelectTrigger id="businessState">
-                          <SelectValue placeholder="Pilih negeri" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {states.map((state) => (
-                            <SelectItem key={state.value} value={state.value}>
-                              {state.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ipdName">Nama IPD *</Label>
-                      <Input
-                        id="ipdName"
-                        placeholder="cth: IPD Johor Bahru Selatan"
-                        value={formData.ipdName}
-                        onChange={(e) => handleInputChange('ipdName', e.target.value)}
-                      />
-                    </div>
+                </div>
+              </section>
+
+              <div className="h-[1px] w-full bg-green-200" />
+
+              {/* IPD Information Section */}
+              <section className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-semibold text-amber-900">Maklumat IPD</h2>
+                  <p className="text-sm text-slate-600">
+                    Pilih Ibu Pejabat Polis Daerah (IPD) yang menjaga kawasan premis perniagaan anda.
+                  </p>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="selectedIpd">Pilih IPD *</Label>
+                    <Select
+                      value={formData.selectedIpdId}
+                      onValueChange={handleIpdSelect}
+                    >
+                      <SelectTrigger id="selectedIpd">
+                        <SelectValue placeholder="Pilih IPD dari senarai" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px]">
+                        {ipdList.map((ipd, index) => (
+                          <SelectItem key={index} value={index.toString()}>
+                            {ipd.name} - {ipd.city}, {ipd.state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-slate-600">
+                      Pilih dari senarai {ipdList.length} IPD di Semenanjung Malaysia. Maklumat akan auto diisi.
+                    </p>
                   </div>
+
+                  {/* Auto-filled IPD fields */}
+                  {formData.ipdLine1 && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg space-y-3">
+                      <p className="text-sm font-semibold text-green-800">Maklumat IPD (Auto Diisi):</p>
+                      <div className="grid gap-2 text-sm">
+                        <div><span className="font-medium">Nama:</span> {formData.ipdLine1}</div>
+                        <div><span className="font-medium">Alamat:</span> {formData.ipdLine2}</div>
+                        <div><span className="font-medium">Poskod/Bandar:</span> {formData.ipdLine3}</div>
+                        <div><span className="font-medium">Negeri:</span> {formData.ipdLine4}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </section>
 
@@ -568,19 +592,49 @@ const PermitPDRM = () => {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Sedang Proses...
+                      Sedang Jana PDF...
                     </>
                   ) : (
                     <>
                       <Download className="mr-2 h-5 w-5" />
-                      Jana Surat Lantikan Agent
+                      Jana Surat Lantikan + Borang IPD
                     </>
                   )}
                 </Button>
                 <p className="text-sm text-slate-600 text-center mt-4">
-                  Dengan klik butang di atas, Surat Lantikan Agent akan dijana dan anda akan dihubungkan ke WhatsApp kami.
+                  Klik butang untuk auto jana 2 dokumen: Surat Lantikan Agent dan Borang Permohonan IPD.
+                  Selepas siap, butang muat turun dan WhatsApp akan muncul di bawah.
                 </p>
               </div>
+
+              {generatedPdf && lastSubmission && (
+                <div className="mt-8 border border-green-200 bg-green-50 rounded-lg p-6 space-y-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-900">Dokumen Sedia Dimuat Turun</h3>
+                    <p className="text-sm text-green-800">
+                      Surat Lantikan Agent dan Borang IPD untuk {lastSubmission.fullName} berjaya dijana. Sila muat turun PDF dan hubungi kami untuk proses seterusnya.
+                    </p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button onClick={handleDownloadPdf} className="bg-green-600 hover:bg-green-700 text-white">
+                      <Download className="h-4 w-4 mr-2" />
+                      Muat Turun PDF
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleOpenWhatsApp}
+                      className="border-green-600 text-green-700 hover:bg-green-100"
+                    >
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      WhatsApp BMFireworks
+                    </Button>
+                  </div>
+                  <p className="text-xs text-green-700">
+                    Nota: Salin link dokumen ini jika perlu simpan atau kongsikan: <span className="underline break-all">{generatedPdf.url}</span>
+                  </p>
+                </div>
+              )}
             </div>
           </form>
         </div>

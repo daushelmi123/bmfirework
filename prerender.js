@@ -8,17 +8,20 @@ const toAbsolute = (p) => path.resolve(__dirname, p)
 const template = fs.readFileSync(toAbsolute('dist/index.html'), 'utf-8')
 const { render } = await import('./dist/server/entry-server.js')
 
-// Routes matching App.tsx exactly - BM Firework is single page app with only Products
-// When adding new pages/blogs, add routes here:
-// Example: '/blog', '/blog/post-1', '/about', '/contact', etc.
+// Routes matching App.tsx for static prerender
 const routesToPrerender = [
-  '/' // Single page app - only Products page
-  // Add new pages/blogs here when created:
-  // '/blog',
-  // '/blog/post-1', 
-  // '/about',
-  // '/contact'
-]
+  '/',
+  '/products',
+  '/cartons',
+  '/packages',
+  '/sales',
+  '/permit-guide',
+  '/suratlantikanagent',
+  '/safety-guide',
+  '/testimonials',
+  '/contact',
+  '/cart'
+];
 
 // Function to ensure directory exists
 function ensureDirectoryExists(filePath) {

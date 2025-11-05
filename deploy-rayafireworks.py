@@ -5,19 +5,22 @@ import os
 import sys
 from pathlib import Path
 
+FTP_HOST = os.environ.get("RAYA_FTP_HOST")
+FTP_USER = os.environ.get("RAYA_FTP_USER")
+FTP_PASS = os.environ.get("RAYA_FTP_PASS")
+REMOTE_DIR = os.environ.get("RAYA_REMOTE_DIR", "/rayafireworks.com")
+LOCAL_DIR = os.environ.get("RAYA_BUILD_DIR", "dist")
+
 def deploy_rayafireworks():
     """Deploy RayaFireworks website to hosting"""
-    
-    # FTP Configuration
-    FTP_HOST = "thexpertbrow.com"
-    FTP_USER = "thexpert"
-    FTP_PASS = "9-Eu9T35fhUG;i"
-    REMOTE_DIR = "/rayafireworks.com"
-    LOCAL_DIR = "dist"
     
     print("🌙 Starting RayaFireworks.com Deployment...")
     print("=" * 50)
     
+    if not FTP_HOST or not FTP_USER or not FTP_PASS:
+        print("❌ FTP credentials missing. Set RAYA_FTP_HOST, RAYA_FTP_USER, RAYA_FTP_PASS.")
+        return False
+
     # Check if dist directory exists
     if not os.path.exists(LOCAL_DIR):
         print(f"❌ Error: {LOCAL_DIR} directory not found!")
@@ -27,58 +30,58 @@ def deploy_rayafireworks():
     try:
         # Connect to FTP
         print(f"📡 Connecting to {FTP_HOST}...")
-        ftp = ftplib.FTP(FTP_HOST)
-        ftp.login(FTP_USER, FTP_PASS)
-        print("✅ Connected successfully!")
-        
-        # Change to remote directory
-        try:
-            ftp.cwd(REMOTE_DIR)
-            print(f"📁 Changed to directory: {REMOTE_DIR}")
-        except ftplib.error_perm:
-            print(f"❌ Cannot access directory: {REMOTE_DIR}")
-            return False
-        
-        # Upload files
-        uploaded = 0
-        failed = 0
-        
-        def upload_file(local_path, remote_path):
-            nonlocal uploaded, failed
+        with ftplib.FTP(FTP_HOST) as ftp:
+            ftp.login(FTP_USER, FTP_PASS)
+            print("✅ Connected successfully!")
+
+            # Change to remote directory
             try:
-                with open(local_path, 'rb') as file:
-                    ftp.storbinary(f'STOR {remote_path}', file)
-                print(f"  ✅ {remote_path}")
-                uploaded += 1
-            except Exception as e:
-                print(f"  ❌ {remote_path} - Error: {e}")
-                failed += 1
-        
-        # Upload root files
-        print("\n🎆 Uploading RayaFireworks files...")
-        root_files = ['index.html', 'favicon.ico', 'robots.txt', 'placeholder.svg', 'sitemap.xml']
-        for file in root_files:
-            local_file = os.path.join(LOCAL_DIR, file)
-            if os.path.exists(local_file):
-                upload_file(local_file, file)
-        
-        # Upload assets directory
-        assets_dir = os.path.join(LOCAL_DIR, 'assets')
-        if os.path.exists(assets_dir):
-            print("\n📦 Uploading assets...")
-            # Ensure assets directory exists on remote
-            try:
-                ftp.mkd('assets')
+                ftp.cwd(REMOTE_DIR)
+                print(f"📁 Changed to directory: {REMOTE_DIR}")
             except ftplib.error_perm:
-                pass  # Directory already exists
-            
-            for asset_file in os.listdir(assets_dir):
-                local_asset = os.path.join(assets_dir, asset_file)
-                upload_file(local_asset, f'assets/{asset_file}')
-        
-        # Create .htaccess for React Router and Raya theme
-        print("\n⚙️  Creating .htaccess for RayaFireworks...")
-        htaccess_content = """# RayaFireworks.com - Red/Silver Raya Theme Configuration
+                print(f"❌ Cannot access directory: {REMOTE_DIR}")
+                return False
+
+            # Upload files
+            uploaded = 0
+            failed = 0
+
+            def upload_file(local_path, remote_path):
+                nonlocal uploaded, failed
+                try:
+                    with open(local_path, 'rb') as file:
+                        ftp.storbinary(f'STOR {remote_path}', file)
+                    print(f"  ✅ {remote_path}")
+                    uploaded += 1
+                except Exception as e:
+                    print(f"  ❌ {remote_path} - Error: {e}")
+                    failed += 1
+
+            # Upload root files
+            print("\n🎆 Uploading RayaFireworks files...")
+            root_files = ['index.html', 'favicon.ico', 'robots.txt', 'placeholder.svg', 'sitemap.xml']
+            for file in root_files:
+                local_file = os.path.join(LOCAL_DIR, file)
+                if os.path.exists(local_file):
+                    upload_file(local_file, file)
+
+            # Upload assets directory
+            assets_dir = os.path.join(LOCAL_DIR, 'assets')
+            if os.path.exists(assets_dir):
+                print("\n📦 Uploading assets...")
+                # Ensure assets directory exists on remote
+                try:
+                    ftp.mkd('assets')
+                except ftplib.error_perm:
+                    pass  # Directory already exists
+
+                for asset_file in os.listdir(assets_dir):
+                    local_asset = os.path.join(assets_dir, asset_file)
+                    upload_file(local_asset, f'assets/{asset_file}')
+
+            # Create .htaccess for React Router and Raya theme
+            print("\n⚙️  Creating .htaccess for RayaFireworks...")
+            htaccess_content = """# RayaFireworks.com - Red/Silver Raya Theme Configuration
 RewriteEngine On
 
 # Force HTTPS
@@ -113,21 +116,18 @@ RewriteRule . /index.html [L]
 # Directory Index
 DirectoryIndex index.html
 """
-        
-        # Upload .htaccess
-        try:
-            from io import BytesIO
-            htaccess_file = BytesIO(htaccess_content.encode('utf-8'))
-            ftp.storbinary('STOR .htaccess', htaccess_file)
-            print("  ✅ .htaccess")
-            uploaded += 1
-        except Exception as e:
-            print(f"  ❌ .htaccess - Error: {e}")
-            failed += 1
-        
-        # Close FTP connection
-        ftp.quit()
-        
+
+            # Upload .htaccess
+            try:
+                from io import BytesIO
+                htaccess_file = BytesIO(htaccess_content.encode('utf-8'))
+                ftp.storbinary('STOR .htaccess', htaccess_file)
+                print("  ✅ .htaccess")
+                uploaded += 1
+            except Exception as e:
+                print(f"  ❌ .htaccess - Error: {e}")
+                failed += 1
+
         # Summary
         print("\n" + "=" * 50)
         print("🎆 RayaFireworks.com Deployment Complete!")
@@ -135,7 +135,7 @@ DirectoryIndex index.html
         print(f"❌ Files failed: {failed}")
         print(f"🎉 Website: https://rayafireworks.com")
         print("Selamat Hari Raya! 🌙✨")
-        
+
         return failed == 0
         
     except Exception as e:
