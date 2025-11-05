@@ -8692,7 +8692,8 @@ const PermitPDRM = () => {
         applicationDate: formattedDate,
         businessLocation: formData.businessLocation,
         businessAddress1: formData.businessAddress1,
-        businessAddress2: formData.businessAddress2,
+        // Add trailing space to fix concatenation spacing in PDF output
+        businessAddress2: formData.businessAddress2 ? formData.businessAddress2.trim() + " " : "",
         businessState: formData.businessState,
         ipdName: formData.ipdName
       };
