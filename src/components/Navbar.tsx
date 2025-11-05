@@ -23,6 +23,7 @@ const Navbar = () => {
     { name: 'Cartons', href: '/cartons' },
     { name: t('nav.packages'), href: '/packages' },
     { name: t('nav.permitGuide'), href: '/permit-guide' },
+    { name: 'Surat Lantikan Agent', href: '/permitpdrm' },
     { name: t('nav.safetyGuide'), href: '/safety-guide' },
     { name: t('nav.testimonials'), href: '/testimonials' },
     { name: t('nav.contact'), href: '/contact' },

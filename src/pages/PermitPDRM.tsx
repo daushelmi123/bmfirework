@@ -230,14 +230,14 @@ const PermitPDRM = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300">
-            Permohonan Permit Majlis
+            Surat Lantikan Agent
           </span>
           <h1 className="mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-green-700 to-amber-700 bg-clip-text text-transparent">
             Satu Borang Untuk Semua Dokumen PDRM
           </h1>
           <p className="mt-4 text-lg text-slate-700 max-w-2xl mx-auto">
             Isi maklumat perniagaan anda sekali sahaja. Sistem BMFireworks akan auto isi 3-5 dokumen wajib
-            (Surat Lantikan, Borang IPD, Borang PBT) dan simpan dengan selamat.
+            (Surat Lantikan Agent, Borang IPD, Borang PBT) dan simpan dengan selamat.
           </p>
         </div>
 
@@ -277,7 +277,7 @@ const PermitPDRM = () => {
                     </SelectContent>
                   </Select>
                   <p className="text-sm text-slate-600">
-                    Sistem akan auto pilih Surat Kebenaran yang bersesuaian dengan perayaan.
+                    Sistem akan auto isi Surat Lantikan Agent yang bersesuaian dengan jenis permohonan.
                   </p>
                 </div>
               </section>
@@ -573,12 +573,12 @@ const PermitPDRM = () => {
                   ) : (
                     <>
                       <Download className="mr-2 h-5 w-5" />
-                      Jana Dokumen Permit
+                      Jana Surat Lantikan Agent
                     </>
                   )}
                 </Button>
                 <p className="text-sm text-slate-600 text-center mt-4">
-                  Dengan klik butang di atas, dokumen permit akan dijana dan anda akan dihubungkan ke WhatsApp kami.
+                  Dengan klik butang di atas, Surat Lantikan Agent akan dijana dan anda akan dihubungkan ke WhatsApp kami.
                 </p>
               </div>
             </div>
@@ -592,12 +592,12 @@ const PermitPDRM = () => {
             Nak Bantuan?
           </h3>
           <p className="text-slate-700 mb-4">
-            Team BMFireworks ada pengalaman bantu customer buat permohonan permit.
+            Team BMFireworks ada pengalaman bantu customer buat Surat Lantikan Agent.
             WhatsApp je untuk panduan lengkap supaya permohonan lulus dengan mudah!
           </p>
           <Button
             onClick={() => {
-              const message = 'Hi BMFireworks! Saya nak tanya tentang permohonan permit mercun.';
+              const message = 'Hi BMFireworks! Saya nak tanya tentang Surat Lantikan Agent untuk mercun.';
               const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
               window.open(waUrl, '_blank');
             }}

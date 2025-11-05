@@ -1276,6 +1276,7 @@ const Navbar = () => {
     { name: "Cartons", href: "/cartons" },
     { name: t("nav.packages"), href: "/packages" },
     { name: t("nav.permitGuide"), href: "/permit-guide" },
+    { name: "Surat Lantikan Agent", href: "/permitpdrm" },
     { name: t("nav.safetyGuide"), href: "/safety-guide" },
     { name: t("nav.testimonials"), href: "/testimonials" },
     { name: t("nav.contact"), href: "/contact" }
@@ -8748,9 +8749,9 @@ const PermitPDRM = () => {
   };
   return /* @__PURE__ */ jsx("div", { className: "min-h-screen py-16 bg-gradient-to-br from-amber-50 via-green-50 to-amber-50", children: /* @__PURE__ */ jsxs("div", { className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8", children: [
     /* @__PURE__ */ jsxs("div", { className: "text-center mb-12", children: [
-      /* @__PURE__ */ jsx("span", { className: "inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300", children: "Permohonan Permit Majlis" }),
+      /* @__PURE__ */ jsx("span", { className: "inline-flex items-center px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-sm font-semibold border border-green-300", children: "Surat Lantikan Agent" }),
       /* @__PURE__ */ jsx("h1", { className: "mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-green-700 to-amber-700 bg-clip-text text-transparent", children: "Satu Borang Untuk Semua Dokumen PDRM" }),
-      /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg text-slate-700 max-w-2xl mx-auto", children: "Isi maklumat perniagaan anda sekali sahaja. Sistem BMFireworks akan auto isi 3-5 dokumen wajib (Surat Lantikan, Borang IPD, Borang PBT) dan simpan dengan selamat." })
+      /* @__PURE__ */ jsx("p", { className: "mt-4 text-lg text-slate-700 max-w-2xl mx-auto", children: "Isi maklumat perniagaan anda sekali sahaja. Sistem BMFireworks akan auto isi 3-5 dokumen wajib (Surat Lantikan Agent, Borang IPD, Borang PBT) dan simpan dengan selamat." })
     ] }),
     /* @__PURE__ */ jsxs("div", { className: "rounded-lg border border-green-300 bg-white shadow-2xl", children: [
       /* @__PURE__ */ jsx("div", { className: "flex flex-col space-y-1.5 p-6 border-b border-green-200 bg-gradient-to-r from-green-50 to-amber-50", children: /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold text-amber-900", children: "Maklumat Pemohon & Perniagaan" }) }),
@@ -8773,7 +8774,7 @@ const PermitPDRM = () => {
                 ]
               }
             ),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Sistem akan auto pilih Surat Kebenaran yang bersesuaian dengan perayaan." })
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Sistem akan auto isi Surat Lantikan Agent yang bersesuaian dengan jenis permohonan." })
           ] })
         ] }),
         /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
@@ -9071,11 +9072,11 @@ const PermitPDRM = () => {
                 "Sedang Proses..."
               ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
                 /* @__PURE__ */ jsx(Download, { className: "mr-2 h-5 w-5" }),
-                "Jana Dokumen Permit"
+                "Jana Surat Lantikan Agent"
               ] })
             }
           ),
-          /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600 text-center mt-4", children: "Dengan klik butang di atas, dokumen permit akan dijana dan anda akan dihubungkan ke WhatsApp kami." })
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600 text-center mt-4", children: "Dengan klik butang di atas, Surat Lantikan Agent akan dijana dan anda akan dihubungkan ke WhatsApp kami." })
         ] })
       ] }) })
     ] }),
@@ -9084,12 +9085,12 @@ const PermitPDRM = () => {
         /* @__PURE__ */ jsx(MessageCircle, { className: "mr-3 h-6 w-6 text-green-600" }),
         "Nak Bantuan?"
       ] }),
-      /* @__PURE__ */ jsx("p", { className: "text-slate-700 mb-4", children: "Team BMFireworks ada pengalaman bantu customer buat permohonan permit. WhatsApp je untuk panduan lengkap supaya permohonan lulus dengan mudah!" }),
+      /* @__PURE__ */ jsx("p", { className: "text-slate-700 mb-4", children: "Team BMFireworks ada pengalaman bantu customer buat Surat Lantikan Agent. WhatsApp je untuk panduan lengkap supaya permohonan lulus dengan mudah!" }),
       /* @__PURE__ */ jsxs(
         Button,
         {
           onClick: () => {
-            const message = "Hi BMFireworks! Saya nak tanya tentang permohonan permit mercun.";
+            const message = "Hi BMFireworks! Saya nak tanya tentang Surat Lantikan Agent untuk mercun.";
             const waUrl = `https://wa.me/60137340415?text=${encodeURIComponent(message)}`;
             window.open(waUrl, "_blank");
           },
