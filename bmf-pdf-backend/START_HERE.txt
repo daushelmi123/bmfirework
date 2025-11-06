@@ -1,0 +1,195 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║         📄 PDF SERVICE BACKEND - REUSABLE FOR ANY COMPANY          ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+Terima kasih kerana menggunakan PDF Service Backend!
+
+Service ini adalah reusable backend untuk generate PDF dengan auto-fill forms,
+webhook integration, dan auto-cleanup features.
+
+┌────────────────────────────────────────────────────────────────────┐
+│  🚀 QUICK START - Baca dalam urutan ini:                          │
+└────────────────────────────────────────────────────────────────────┘
+
+1️⃣  OVERVIEW.md
+    ↳ Baca dahulu untuk faham apa itu service ni
+    ↳ High-level overview of features & use cases
+    ↳ Time: 5 minit
+
+2️⃣  QUICKSTART.md
+    ↳ Setup dalam 15 minit
+    ↳ Step-by-step guide untuk local testing
+    ↳ Time: 15-20 minit
+
+3️⃣  CUSTOMIZATION_GUIDE.md
+    ↳ Detailed guide untuk customize untuk company baru
+    ↳ Edit field mappings, webhook, deployment
+    ↳ Time: 30 minit (depending on complexity)
+
+4️⃣  README.md
+    ↳ Full documentation of all features
+    ↳ API reference, troubleshooting, best practices
+    ↳ Reference material
+
+┌────────────────────────────────────────────────────────────────────┐
+│  📋 SETUP CHECKLIST                                                │
+└────────────────────────────────────────────────────────────────────┘
+
+Phase 1: Local Setup (15 minit)
+□ Install dependencies: npm install
+□ Copy .env.template to .env
+□ Generate API key: openssl rand -base64 32
+□ Add PDF templates to pdf_templates/
+□ Update field mappings in src/services/pdfService.ts
+□ Test locally: npm run dev
+
+Phase 2: Customization (20 minit)
+□ Update webhook URL in .env
+□ Customize webhook payload in src/services/webhookService.ts
+□ Update validation rules in src/utils/validators.ts
+□ Test webhook integration
+□ Verify auto-cleanup working
+
+Phase 3: Production (30 minit)
+□ Create .env.production with production settings
+□ Edit deploy-template.sh with VPS details
+□ Run deployment: ./deploy-template.sh
+□ Configure Nginx/Apache reverse proxy
+□ Setup SSL certificate
+□ Test production API
+
+Phase 4: Integration (varies)
+□ Integrate with frontend
+□ Test end-to-end flow
+□ Monitor logs
+□ Setup monitoring/alerting
+
+┌────────────────────────────────────────────────────────────────────┐
+│  🎯 KEY FILES TO EDIT                                              │
+└────────────────────────────────────────────────────────────────────┘
+
+Essential:
+✏️  .env                           - Configuration
+✏️  src/services/pdfService.ts     - Field mappings (line 50)
+✏️  pdf_templates/                 - Put PDF files here
+
+Optional:
+📝  src/services/webhookService.ts - Webhook customization
+📝  src/utils/validators.ts        - Validation rules
+📝  deploy-template.sh             - Deployment settings
+
+┌────────────────────────────────────────────────────────────────────┐
+│  🛠️ COMMON COMMANDS                                                │
+└────────────────────────────────────────────────────────────────────┘
+
+Development:
+$ npm install               # Install dependencies
+$ npm run dev              # Start development server
+$ npm run build            # Build for production
+
+Testing:
+$ curl http://localhost:4000/health                    # Health check
+$ curl -X POST http://localhost:4000/api/pdf/generate  # Generate PDF
+
+Deployment:
+$ ./deploy-template.sh     # Deploy to VPS
+$ pm2 logs pdf-service     # View logs
+$ pm2 restart pdf-service  # Restart service
+
+┌────────────────────────────────────────────────────────────────────┐
+│  📦 WHAT'S INCLUDED                                                │
+└────────────────────────────────────────────────────────────────────┘
+
+✅ Auto-fill PDF forms
+✅ Multi-page PDF generation
+✅ Webhook integration (Boost.space/Make.com)
+✅ Auto-cleanup service (configurable retention)
+✅ API key authentication
+✅ Input validation
+✅ Error handling & logging
+✅ Production-ready deployment script
+✅ Complete documentation
+
+┌────────────────────────────────────────────────────────────────────┐
+│  💡 USE CASES                                                       │
+└────────────────────────────────────────────────────────────────────┘
+
+✓ Permit applications (GRK Fireworks - current)
+✓ E-commerce invoices & receipts
+✓ HR employment contracts
+✓ Healthcare patient forms
+✓ Real estate rental agreements
+✓ Any form-based PDF generation!
+
+┌────────────────────────────────────────────────────────────────────┐
+│  📞 SUPPORT                                                         │
+└────────────────────────────────────────────────────────────────────┘
+
+Need help?
+- Read QUICKSTART.md for quick setup
+- Read CUSTOMIZATION_GUIDE.md for detailed instructions
+- Check README.md for full documentation
+- View logs: tail -f logs/app.log
+
+┌────────────────────────────────────────────────────────────────────┐
+│  🚨 IMPORTANT NOTES                                                 │
+└────────────────────────────────────────────────────────────────────┘
+
+⚠️  Change API_KEY for each company (security!)
+⚠️  Update webhook URL untuk company baru
+⚠️  Test locally before deploying to production
+⚠️  Setup SSL certificate untuk production
+⚠️  Monitor logs for errors
+
+┌────────────────────────────────────────────────────────────────────┐
+│  ⏱️ TIME ESTIMATES                                                  │
+└────────────────────────────────────────────────────────────────────┘
+
+Reading documentation:     10 minit
+Local setup & testing:     15 minit
+Customization:            20-30 minit
+Production deployment:     30 minit
+Frontend integration:      varies
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total:                    1-2 jam
+
+┌────────────────────────────────────────────────────────────────────┐
+│  🎓 LEARNING PATH                                                   │
+└────────────────────────────────────────────────────────────────────┘
+
+Beginner:
+1. Read OVERVIEW.md
+2. Follow QUICKSTART.md step-by-step
+3. Test with sample data
+4. Understand the flow
+
+Intermediate:
+1. Read CUSTOMIZATION_GUIDE.md
+2. Modify field mappings
+3. Customize webhook payload
+4. Deploy to staging
+
+Advanced:
+1. Read full README.md
+2. Customize validation logic
+3. Add new features
+4. Setup monitoring & alerting
+
+┌────────────────────────────────────────────────────────────────────┐
+│  ✨ GOOD LUCK!                                                      │
+└────────────────────────────────────────────────────────────────────┘
+
+Selamat menggunakan PDF Service Backend!
+Semoga berjaya implement untuk company baru.
+
+Questions? Check the documentation files or contact developer.
+
+═══════════════════════════════════════════════════════════════════════
+
+📂 Location: /Users/firdaus/Desktop/PDF Service Backend/
+📅 Created: November 2025
+🏷️  Version: 1.0.0
+
+═══════════════════════════════════════════════════════════════════════
