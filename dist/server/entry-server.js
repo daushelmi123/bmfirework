@@ -9374,17 +9374,39 @@ const ipdList = [
     state: "Wilayah Persekutuan Putrajaya"
   }
 ];
+const PDF_SERVICE_URL = "/api-proxy.php";
 const countryCodes = [
   { value: "60", label: "+60 (MY)" },
   { value: "65", label: "+65 (SG)" },
   { value: "62", label: "+62 (ID)" },
   { value: "66", label: "+66 (TH)" }
 ];
+const validateIC = (ic) => {
+  const icClean = ic.replace(/-/g, "");
+  if (icClean.length !== 12 || !/^\d{12}$/.test(icClean)) {
+    return false;
+  }
+  parseInt(icClean.substring(0, 2));
+  const month = parseInt(icClean.substring(2, 4));
+  const day = parseInt(icClean.substring(4, 6));
+  if (month < 1 || month > 12) return false;
+  if (day < 1 || day > 31) return false;
+  return true;
+};
+const validatePhone = (phone) => {
+  const phoneClean = phone.replace(/\D/g, "");
+  return phoneClean.length >= 9 && phoneClean.length <= 11;
+};
+const validateRequired = (value) => {
+  return value.trim().length > 0;
+};
 const PermitPDRM = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generatedPdf, setGeneratedPdf] = useState(null);
   const [lastSubmission, setLastSubmission] = useState(null);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
+    festivalType: "",
     fullName: "",
     icNumber: "",
     occupation: "",
@@ -9393,11 +9415,11 @@ const PermitPDRM = () => {
     addressLine1: "",
     addressLine2: "",
     addressLine3: "",
-    companyName: "BM FIREWORKS SDN. BHD.",
-    // Pre-filled
+    companyName: "",
     businessAddressLine1: "",
     businessAddressLine2: "",
     businessAddressLine3: "",
+    businessState: "",
     selectedIpdId: "",
     ipdLine1: "",
     ipdLine2: "",
@@ -9406,6 +9428,7 @@ const PermitPDRM = () => {
     ipdLine5: "",
     applicationDate: void 0
   });
+  const filteredIpdList = formData.businessState ? ipdList.filter((ipd) => ipd.state === formData.businessState) : ipdList;
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -9424,67 +9447,163 @@ const PermitPDRM = () => {
       }));
     }
   };
+  const handleStateSelect = (state) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessState: state,
+      // Reset IPD selection when state changes
+      selectedIpdId: "",
+      ipdLine1: "",
+      ipdLine2: "",
+      ipdLine3: "",
+      ipdLine4: "",
+      ipdLine5: ""
+    }));
+  };
   const handleSubmit = async (e) => {
-    var _a, _b;
     e.preventDefault();
-    if (!formData.fullName || !formData.icNumber || !formData.phone || !formData.addressLine1 || !formData.ipdLine1 || !formData.applicationDate) {
-      toast$1.error("Sila lengkapkan semua medan wajib (*)");
+    const newErrors = {};
+    if (!formData.festivalType) {
+      newErrors.festivalType = true;
+      toast$1.error("Sila pilih jenis perayaan (Raya atau CNY)");
+    }
+    if (!validateRequired(formData.fullName)) {
+      newErrors.fullName = true;
+      toast$1.error("Nama Penuh diperlukan");
+    }
+    if (!validateRequired(formData.icNumber)) {
+      newErrors.icNumber = true;
+      toast$1.error("No. Kad Pengenalan diperlukan");
+    } else if (!validateIC(formData.icNumber)) {
+      newErrors.icNumber = true;
+      toast$1.error("Format No. Kad Pengenalan tidak sah. Format: YYMMDD-PB-NNNN (contoh: 900101-10-1234)");
+    }
+    if (!validateRequired(formData.occupation)) {
+      newErrors.occupation = true;
+      toast$1.error("Pekerjaan diperlukan");
+    }
+    if (!validateRequired(formData.phone)) {
+      newErrors.phone = true;
+      toast$1.error("No. Telefon diperlukan");
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = true;
+      toast$1.error("No. Telefon tidak sah. Masukkan 9-11 digit nombor telefon Malaysia");
+    }
+    if (!validateRequired(formData.addressLine1)) {
+      newErrors.addressLine1 = true;
+      toast$1.error("Alamat Rumah (Baris 1) diperlukan");
+    }
+    if (!validateRequired(formData.companyName)) {
+      newErrors.companyName = true;
+      toast$1.error("Nama Syarikat diperlukan");
+    }
+    if (!validateRequired(formData.businessAddressLine1)) {
+      newErrors.businessAddressLine1 = true;
+      toast$1.error("Alamat Premis Perniagaan (Baris 1) diperlukan");
+    }
+    if (!validateRequired(formData.businessState)) {
+      newErrors.businessState = true;
+      toast$1.error("Sila pilih Negeri Premis Perniagaan");
+    }
+    if (!validateRequired(formData.ipdLine1)) {
+      newErrors.selectedIpdId = true;
+      toast$1.error("Sila pilih IPD");
+    }
+    if (!formData.applicationDate) {
+      newErrors.applicationDate = true;
+      toast$1.error("Tarikh Permohonan diperlukan");
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
     setIsSubmitting(true);
     setGeneratedPdf(null);
     setLastSubmission(null);
     try {
-      const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, "")}`;
+      let phoneDigits = formData.phone.replace(/\D/g, "");
+      phoneDigits = phoneDigits.replace(/^0+/, "");
+      const fullPhone = phoneDigits.startsWith("60") ? phoneDigits : `60${phoneDigits}`;
       const backendDate = formData.applicationDate ? format(formData.applicationDate, "yyyy-MM-dd") : "";
-      const addressLine23 = [formData.addressLine2, formData.addressLine3].filter((line) => line.trim()).join(" ");
-      const businessAddressLine23 = [formData.businessAddressLine2, formData.businessAddressLine3].filter((line) => line.trim()).join(" ");
+      const addressLine23 = [formData.addressLine2, formData.addressLine3].filter((line) => line.trim()).join(", ");
+      const businessAddressLine23 = [formData.businessAddressLine2, formData.businessAddressLine3].filter((line) => line.trim()).join(", ");
       const payload = {
-        // BM Fireworks specific fields (will be used by template)
+        // Personal info
         fullName: formData.fullName,
         icNumber: formData.icNumber,
         occupation: formData.occupation,
         phone: fullPhone,
+        countryCode: formData.countryCode,
+        // Home address
         addressLine1: formData.addressLine1,
         addressLine23,
         // Combined lines 2+3
+        // Company info (pemohon's company)
         companyName: formData.companyName,
+        // Business premises (tapak/gerai) - same as company address
         businessAddressLine1: formData.businessAddressLine1,
         businessAddressLine23,
-        // Combined lines 2+3
+        // Combined business lines 2+3
+        // IPD info
+        ipd: formData.ipdLine1,
         ipdLine1: formData.ipdLine1,
         ipdLine2: formData.ipdLine2,
         ipdLine3: formData.ipdLine3,
         ipdLine4: formData.ipdLine4,
         ipdLine5: formData.ipdLine5,
+        // Application date
         applicationDate: backendDate,
         // YYYY-MM-DD format for backend
-        // Required GRK fields for validation (use proper values)
-        addressLine2: "",
-        city: formData.ipdLine4 || "Johor",
-        // Use IPD state as city fallback
-        postcode: ((_b = (_a = formData.ipdLine3) == null ? void 0 : _a.match(/\d{5}/)) == null ? void 0 : _b[0]) || "80000",
-        // Extract postcode from ipdLine3
-        state: formData.ipdLine4 || "Johor",
-        companySsm: "202300000000",
-        // Dummy SSM for validation
-        businessLocation: formData.businessAddressLine1 || "Tapak Perniagaan",
-        businessAddress1: formData.businessAddressLine1 || "Tapak Perniagaan",
-        businessAddress2: "",
-        businessState: formData.ipdLine4 || "Johor",
-        ipd: formData.ipdLine1,
-        // Use IPD name
-        countryCode: formData.countryCode
+        // Festival type
+        festivalType: formData.festivalType
       };
-      const response = await fetch("http://84.247.150.90:4001/api/pdf-orders", {
+      const templates = formData.festivalType === "raya-2026" ? [
+        "bmfireworks-borang-ipd",
+        "bmfireworks-surat-lantikan-raya",
+        "bmfireworks-borang-c",
+        "bmfireworks-borang-e",
+        "bmfireworks-lampiran-a",
+        "bmfireworks-surat-kdn",
+        "bmfireworks-borang-a",
+        "bmfireworks-borang-a-2",
+        "bmfireworks-lampiran-a-3",
+        "bmfireworks-lampiran-a-4",
+        "amflex-surat-lantikan-raya",
+        "amflex-borang-c",
+        "amflex-borang-e",
+        "amflex-lampiran-a",
+        "amflex-borang-a",
+        "amflex-lampiran-a-1",
+        "amflex-lampiran-a2",
+        "amflex-lampiran-a3"
+      ] : [
+        "bmfireworks-borang-ipd",
+        "bmfireworks-surat-lantikan-cny",
+        "bmfireworks-borang-c",
+        "bmfireworks-borang-e",
+        "bmfireworks-lampiran-a",
+        "bmfireworks-surat-kdn",
+        "bmfireworks-borang-a",
+        "bmfireworks-borang-a-2",
+        "bmfireworks-lampiran-a-3",
+        "bmfireworks-lampiran-a-4",
+        "amflex-surat-lantikan-cny",
+        "amflex-borang-c",
+        "amflex-borang-e",
+        "amflex-lampiran-a",
+        "amflex-borang-a",
+        "amflex-lampiran-a-1",
+        "amflex-lampiran-a2",
+        "amflex-lampiran-a3"
+      ];
+      const response = await fetch(PDF_SERVICE_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": "bmf_prod_7UWZO8xLyEPLjj5+VPT2KuuS4vWi247VVzfvvfHvqIc="
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           ...payload,
-          templates: ["bmfireworks-surat-lantikan-cny", "bmfireworks-borang-ipd"]
+          templates
         })
       });
       if (!response.ok) {
@@ -9501,6 +9620,7 @@ const PermitPDRM = () => {
         toast$1.success("Dokumen berjaya dijana. Muat turun PDF dan hubungi kami melalui WhatsApp.");
       }
       setFormData({
+        festivalType: "",
         fullName: "",
         icNumber: "",
         occupation: "",
@@ -9509,7 +9629,8 @@ const PermitPDRM = () => {
         addressLine1: "",
         addressLine2: "",
         addressLine3: "",
-        companyName: "BM FIREWORKS SDN. BHD.",
+        companyName: "",
+        businessState: "",
         businessAddressLine1: "",
         businessAddressLine2: "",
         businessAddressLine3: "",
@@ -9550,6 +9671,33 @@ const PermitPDRM = () => {
     /* @__PURE__ */ jsxs("div", { className: "rounded-lg border border-green-300 bg-white shadow-2xl", children: [
       /* @__PURE__ */ jsx("div", { className: "flex flex-col space-y-1.5 p-6 border-b border-green-200 bg-gradient-to-r from-green-50 to-amber-50", children: /* @__PURE__ */ jsx("h3", { className: "text-xl font-semibold text-amber-900", children: "Maklumat Pemohon & Perniagaan" }) }),
       /* @__PURE__ */ jsx("form", { onSubmit: handleSubmit, className: "p-6 md:p-8", children: /* @__PURE__ */ jsxs("div", { className: "space-y-10", children: [
+        /* @__PURE__ */ jsx("section", { className: "space-y-4", children: /* @__PURE__ */ jsx("div", { className: "rounded-lg border-2 border-amber-300 bg-amber-50 p-6", children: /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Jenis Perayaan *" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600 mt-1", children: "Pilih jenis perayaan untuk surat lantikan yang sesuai" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsx(Label, { htmlFor: "festivalType", className: "text-base font-medium", children: "Permohonan untuk Perayaan" }),
+            /* @__PURE__ */ jsxs(
+              "select",
+              {
+                id: "festivalType",
+                value: formData.festivalType,
+                onChange: (e) => handleInputChange("festivalType", e.target.value),
+                className: "flex h-10 w-full rounded-md border border-amber-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2",
+                children: [
+                  /* @__PURE__ */ jsx("option", { value: "", children: "-- Sila Pilih Jenis Perayaan --" }),
+                  /* @__PURE__ */ jsx("option", { value: "raya-2026", children: "Hari Raya Aidilfitri 2026" }),
+                  /* @__PURE__ */ jsx("option", { value: "cny-2026", children: "Tahun Baru Cina (CNY) 2026" })
+                ]
+              }
+            ),
+            formData.festivalType && /* @__PURE__ */ jsxs("p", { className: "text-xs text-green-700 font-medium mt-2", children: [
+              "✓ ",
+              formData.festivalType === "raya-2026" ? "Surat lantikan untuk Hari Raya Aidilfitri 2026" : "Surat lantikan untuk Tahun Baru Cina 2026"
+            ] })
+          ] })
+        ] }) }) }),
         /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { children: [
             /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Pemohon" }),
@@ -9564,7 +9712,8 @@ const PermitPDRM = () => {
                   id: "fullName",
                   placeholder: "contoh: Ahmad bin Ali",
                   value: formData.fullName,
-                  onChange: (e) => handleInputChange("fullName", e.target.value)
+                  onChange: (e) => handleInputChange("fullName", e.target.value),
+                  className: cn(errors.fullName && "border-red-500 focus-visible:ring-red-500")
                 }
               )
             ] }),
@@ -9576,7 +9725,8 @@ const PermitPDRM = () => {
                   id: "icNumber",
                   placeholder: "900101-14-1234",
                   value: formData.icNumber,
-                  onChange: (e) => handleInputChange("icNumber", e.target.value)
+                  onChange: (e) => handleInputChange("icNumber", e.target.value),
+                  className: cn(errors.icNumber && "border-red-500 focus-visible:ring-red-500")
                 }
               )
             ] }),
@@ -9588,7 +9738,8 @@ const PermitPDRM = () => {
                   id: "occupation",
                   placeholder: "contoh: Usahawan",
                   value: formData.occupation,
-                  onChange: (e) => handleInputChange("occupation", e.target.value)
+                  onChange: (e) => handleInputChange("occupation", e.target.value),
+                  className: cn(errors.occupation && "border-red-500 focus-visible:ring-red-500")
                 }
               )
             ] }),
@@ -9615,7 +9766,8 @@ const PermitPDRM = () => {
                     id: "phone",
                     placeholder: "0123456789 (tanpa +60)",
                     value: formData.phone,
-                    onChange: (e) => handleInputChange("phone", e.target.value)
+                    onChange: (e) => handleInputChange("phone", e.target.value),
+                    className: cn(errors.phone && "border-red-500 focus-visible:ring-red-500")
                   }
                 ),
                 /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Taip nombor tanpa kod negara. Sistem akan simpan sebagai 60XXXXXXXXX." })
@@ -9638,7 +9790,8 @@ const PermitPDRM = () => {
                   id: "addressLine1",
                   placeholder: "No 12, Jalan Bunga Api",
                   value: formData.addressLine1,
-                  onChange: (e) => handleInputChange("addressLine1", e.target.value)
+                  onChange: (e) => handleInputChange("addressLine1", e.target.value),
+                  className: cn(errors.addressLine1 && "border-red-500 focus-visible:ring-red-500")
                 }
               )
             ] }),
@@ -9672,22 +9825,22 @@ const PermitPDRM = () => {
         /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
         /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Syarikat" }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Nama syarikat pembekal mercun (auto diisi untuk BM Fireworks)." })
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Maklumat Syarikat Pemohon" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Nama syarikat anda yang akan membeli/menjual mercun." })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ jsx(Label, { htmlFor: "companyName", children: "Nama Syarikat Pembekal *" }),
+          /* @__PURE__ */ jsx("div", { className: "grid gap-6", children: /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-w-md", children: [
+            /* @__PURE__ */ jsx(Label, { htmlFor: "companyName", children: "Nama Syarikat *" }),
             /* @__PURE__ */ jsx(
               Input,
               {
                 id: "companyName",
+                placeholder: "contoh: KEDAI RUNCIT ALI SDN BHD",
                 value: formData.companyName,
-                disabled: true,
-                className: "bg-slate-100"
+                onChange: (e) => handleInputChange("companyName", e.target.value),
+                className: cn(errors.companyName && "border-red-500 focus-visible:ring-red-500")
               }
-            ),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Syarikat pembekal telah ditetapkan sebagai BM FIREWORKS SDN. BHD." })
-          ] }),
+            )
+          ] }) }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-w-sm", children: [
             /* @__PURE__ */ jsx(Label, { children: "Tarikh Permohonan *" }),
             /* @__PURE__ */ jsxs(Popover, { children: [
@@ -9720,10 +9873,25 @@ const PermitPDRM = () => {
         /* @__PURE__ */ jsx("div", { className: "h-[1px] w-full bg-green-200" }),
         /* @__PURE__ */ jsxs("section", { className: "space-y-6", children: [
           /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Alamat Premis Perniagaan" }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Alamat tapak/gerai yang akan digunakan untuk berniaga mercun." })
+            /* @__PURE__ */ jsx("h2", { className: "text-2xl font-semibold text-amber-900", children: "Alamat Syarikat / Premis Perniagaan" }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Alamat syarikat/tapak/gerai yang akan digunakan untuk berniaga mercun." })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "grid gap-6", children: [
+            /* @__PURE__ */ jsxs("div", { className: "space-y-2 max-w-md", children: [
+              /* @__PURE__ */ jsx(Label, { htmlFor: "businessState", children: "Negeri Premis Perniagaan *" }),
+              /* @__PURE__ */ jsxs(
+                Select,
+                {
+                  value: formData.businessState,
+                  onValueChange: handleStateSelect,
+                  children: [
+                    /* @__PURE__ */ jsx(SelectTrigger, { id: "businessState", className: cn(errors.businessState && "border-red-500 focus:ring-red-500"), children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih Negeri" }) }),
+                    /* @__PURE__ */ jsx(SelectContent, { children: Array.from(new Set(ipdList.map((ipd) => ipd.state))).sort().map((state) => /* @__PURE__ */ jsx(SelectItem, { value: state, children: state }, state)) })
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: "Pilih negeri premis perniagaan untuk menapis senarai IPD." })
+            ] }),
             /* @__PURE__ */ jsxs("div", { className: "space-y-2", children: [
               /* @__PURE__ */ jsx(Label, { htmlFor: "businessAddressLine1", children: "Alamat Premis (Baris 1) *" }),
               /* @__PURE__ */ jsx(
@@ -9732,7 +9900,8 @@ const PermitPDRM = () => {
                   id: "businessAddressLine1",
                   placeholder: "No Lot/Gerai, Nama Tapak",
                   value: formData.businessAddressLine1,
-                  onChange: (e) => handleInputChange("businessAddressLine1", e.target.value)
+                  onChange: (e) => handleInputChange("businessAddressLine1", e.target.value),
+                  className: cn(errors.businessAddressLine1 && "border-red-500 focus-visible:ring-red-500")
                 }
               )
             ] }),
@@ -9777,23 +9946,25 @@ const PermitPDRM = () => {
                 {
                   value: formData.selectedIpdId,
                   onValueChange: handleIpdSelect,
+                  disabled: !formData.businessState,
                   children: [
-                    /* @__PURE__ */ jsx(SelectTrigger, { id: "selectedIpd", children: /* @__PURE__ */ jsx(SelectValue, { placeholder: "Pilih IPD dari senarai" }) }),
-                    /* @__PURE__ */ jsx(SelectContent, { className: "max-h-[300px]", children: ipdList.map((ipd, index) => /* @__PURE__ */ jsxs(SelectItem, { value: index.toString(), children: [
-                      ipd.name,
-                      " - ",
-                      ipd.city,
-                      ", ",
-                      ipd.state
-                    ] }, index)) })
+                    /* @__PURE__ */ jsx(SelectTrigger, { id: "selectedIpd", className: cn(errors.selectedIpdId && "border-red-500 focus:ring-red-500"), children: /* @__PURE__ */ jsx(SelectValue, { placeholder: formData.businessState ? "Pilih IPD dari senarai" : "Sila pilih Negeri dahulu" }) }),
+                    /* @__PURE__ */ jsx(SelectContent, { className: "max-h-[300px]", children: filteredIpdList.map((ipd, index) => {
+                      const originalIndex = ipdList.findIndex(
+                        (item) => item.name === ipd.name && item.state === ipd.state
+                      );
+                      return /* @__PURE__ */ jsxs(SelectItem, { value: originalIndex.toString(), children: [
+                        ipd.name,
+                        " - ",
+                        ipd.city,
+                        ", ",
+                        ipd.state
+                      ] }, originalIndex);
+                    }) })
                   ]
                 }
               ),
-              /* @__PURE__ */ jsxs("p", { className: "text-sm text-slate-600", children: [
-                "Pilih dari senarai ",
-                ipdList.length,
-                " IPD di Semenanjung Malaysia. Maklumat akan auto diisi."
-              ] })
+              /* @__PURE__ */ jsx("p", { className: "text-sm text-slate-600", children: formData.businessState ? `${filteredIpdList.length} IPD di ${formData.businessState}. Maklumat akan auto diisi.` : `Pilih negeri premis perniagaan terlebih dahulu.` })
             ] }),
             formData.ipdLine1 && /* @__PURE__ */ jsxs("div", { className: "p-4 bg-green-50 border border-green-200 rounded-lg space-y-3", children: [
               /* @__PURE__ */ jsx("p", { className: "text-sm font-semibold text-green-800", children: "Maklumat IPD (Auto Diisi):" }),

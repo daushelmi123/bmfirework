@@ -33,6 +33,9 @@ type SubmissionMeta = {
   message: string;
 };
 
+const PDF_SERVICE_URL =
+  import.meta.env.VITE_BMF_PDF_ENDPOINT ?? '/api-proxy.php';
+
 // Malaysian states
 const states = [
   { value: 'johor', label: 'Johor' },
@@ -73,6 +76,9 @@ const applicationTypes = [
 ];
 
 interface FormData {
+  // Festival type
+  festivalType: 'raya-2026' | 'cny-2026' | '';
+
   // Personal info
   fullName: string;
   icNumber: string;
@@ -85,13 +91,14 @@ interface FormData {
   addressLine2: string;
   addressLine3: string;
 
-  // Company info (pre-filled for BM Fireworks)
+  // Company info (pemohon's company)
   companyName: string;
 
-  // Business address
+  // Business premises address (tapak/gerai) - same as company address
   businessAddressLine1: string;
   businessAddressLine2: string;
   businessAddressLine3: string;
+  businessState: string; // State for filtering IPD
 
   // IPD Information
   selectedIpdId: string; // For dropdown selection
@@ -105,11 +112,43 @@ interface FormData {
   applicationDate: Date | undefined;
 }
 
+// Validation functions
+const validateIC = (ic: string): boolean => {
+  // Format: YYMMDD-PB-NNNN or YYMMDDPBNNNN (12 digits)
+  const icClean = ic.replace(/-/g, '');
+  if (icClean.length !== 12 || !/^\d{12}$/.test(icClean)) {
+    return false;
+  }
+
+  // Validate date part (YYMMDD)
+  const year = parseInt(icClean.substring(0, 2));
+  const month = parseInt(icClean.substring(2, 4));
+  const day = parseInt(icClean.substring(4, 6));
+
+  if (month < 1 || month > 12) return false;
+  if (day < 1 || day > 31) return false;
+
+  return true;
+};
+
+const validatePhone = (phone: string): boolean => {
+  // Malaysian phone: accept any format, just need 9-11 digits
+  const phoneClean = phone.replace(/\D/g, '');
+  // After removing non-digits, should have 9-11 digits (we'll format it later)
+  return phoneClean.length >= 9 && phoneClean.length <= 11;
+};
+
+const validateRequired = (value: string): boolean => {
+  return value.trim().length > 0;
+};
+
 const PermitPDRM = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generatedPdf, setGeneratedPdf] = useState<GeneratedPdf | null>(null);
   const [lastSubmission, setLastSubmission] = useState<SubmissionMeta | null>(null);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<FormData>({
+    festivalType: '',
     fullName: '',
     icNumber: '',
     occupation: '',
@@ -118,10 +157,11 @@ const PermitPDRM = () => {
     addressLine1: '',
     addressLine2: '',
     addressLine3: '',
-    companyName: 'BM FIREWORKS SDN. BHD.', // Pre-filled
+    companyName: '',
     businessAddressLine1: '',
     businessAddressLine2: '',
     businessAddressLine3: '',
+    businessState: '',
     selectedIpdId: '',
     ipdLine1: '',
     ipdLine2: '',
@@ -130,6 +170,11 @@ const PermitPDRM = () => {
     ipdLine5: '',
     applicationDate: undefined,
   });
+
+  // Filter IPD list based on selected business state
+  const filteredIpdList = formData.businessState
+    ? ipdList.filter((ipd) => ipd.state === formData.businessState)
+    : ipdList;
 
   const handleInputChange = (field: keyof FormData, value: string | Date | undefined) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -152,13 +197,92 @@ const PermitPDRM = () => {
     }
   };
 
+  // Handle state selection - reset IPD when state changes
+  const handleStateSelect = (state: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessState: state,
+      // Reset IPD selection when state changes
+      selectedIpdId: '',
+      ipdLine1: '',
+      ipdLine2: '',
+      ipdLine3: '',
+      ipdLine4: '',
+      ipdLine5: '',
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
-    if (!formData.fullName || !formData.icNumber || !formData.phone ||
-        !formData.addressLine1 || !formData.ipdLine1 || !formData.applicationDate) {
-      toast.error('Sila lengkapkan semua medan wajib (*)');
+    // Reset errors
+    const newErrors: Record<string, boolean> = {};
+
+    // Comprehensive Validation
+    if (!formData.festivalType) {
+      newErrors.festivalType = true;
+      toast.error('Sila pilih jenis perayaan (Raya atau CNY)');
+    }
+
+    if (!validateRequired(formData.fullName)) {
+      newErrors.fullName = true;
+      toast.error('Nama Penuh diperlukan');
+    }
+
+    if (!validateRequired(formData.icNumber)) {
+      newErrors.icNumber = true;
+      toast.error('No. Kad Pengenalan diperlukan');
+    } else if (!validateIC(formData.icNumber)) {
+      newErrors.icNumber = true;
+      toast.error('Format No. Kad Pengenalan tidak sah. Format: YYMMDD-PB-NNNN (contoh: 900101-10-1234)');
+    }
+
+    if (!validateRequired(formData.occupation)) {
+      newErrors.occupation = true;
+      toast.error('Pekerjaan diperlukan');
+    }
+
+    if (!validateRequired(formData.phone)) {
+      newErrors.phone = true;
+      toast.error('No. Telefon diperlukan');
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = true;
+      toast.error('No. Telefon tidak sah. Masukkan 9-11 digit nombor telefon Malaysia');
+    }
+
+    if (!validateRequired(formData.addressLine1)) {
+      newErrors.addressLine1 = true;
+      toast.error('Alamat Rumah (Baris 1) diperlukan');
+    }
+
+    if (!validateRequired(formData.companyName)) {
+      newErrors.companyName = true;
+      toast.error('Nama Syarikat diperlukan');
+    }
+
+    if (!validateRequired(formData.businessAddressLine1)) {
+      newErrors.businessAddressLine1 = true;
+      toast.error('Alamat Premis Perniagaan (Baris 1) diperlukan');
+    }
+
+    if (!validateRequired(formData.businessState)) {
+      newErrors.businessState = true;
+      toast.error('Sila pilih Negeri Premis Perniagaan');
+    }
+
+    if (!validateRequired(formData.ipdLine1)) {
+      newErrors.selectedIpdId = true;
+      toast.error('Sila pilih IPD');
+    }
+
+    if (!formData.applicationDate) {
+      newErrors.applicationDate = true;
+      toast.error('Tarikh Permohonan diperlukan');
+    }
+
+    // If there are any errors, set them and stop submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -167,8 +291,14 @@ const PermitPDRM = () => {
     setLastSubmission(null);
 
     try {
-      // Format phone number
-      const fullPhone = `${formData.countryCode}${formData.phone.replace(/^0+/, '')}`;
+      // Format phone number - auto normalize to 60 format
+      let phoneDigits = formData.phone.replace(/\D/g, ''); // Remove all non-digits
+
+      // Remove leading zeros
+      phoneDigits = phoneDigits.replace(/^0+/, '');
+
+      // If starts with 60, keep as is. Otherwise add 60 prefix
+      const fullPhone = phoneDigits.startsWith('60') ? phoneDigits : `60${phoneDigits}`;
 
       // Format date for backend (YYYY-MM-DD)
       const backendDate = formData.applicationDate
@@ -178,56 +308,99 @@ const PermitPDRM = () => {
       // Combine address lines for backend
       const addressLine23 = [formData.addressLine2, formData.addressLine3]
         .filter(line => line.trim())
-        .join(' ');
+        .join(', ');
 
       const businessAddressLine23 = [formData.businessAddressLine2, formData.businessAddressLine3]
         .filter(line => line.trim())
-        .join(' ');
+        .join(', ');
 
       // Prepare payload for PDF service
-      // Backend validation expects GRK fields, but template will use BM fields
       const payload = {
-        // BM Fireworks specific fields (will be used by template)
+        // Personal info
         fullName: formData.fullName,
         icNumber: formData.icNumber,
         occupation: formData.occupation,
         phone: fullPhone,
+        countryCode: formData.countryCode,
+
+        // Home address
         addressLine1: formData.addressLine1,
         addressLine23, // Combined lines 2+3
+
+        // Company info (pemohon's company)
         companyName: formData.companyName,
+
+        // Business premises (tapak/gerai) - same as company address
         businessAddressLine1: formData.businessAddressLine1,
-        businessAddressLine23, // Combined lines 2+3
+        businessAddressLine23, // Combined business lines 2+3
+
+        // IPD info
+        ipd: formData.ipdLine1,
         ipdLine1: formData.ipdLine1,
         ipdLine2: formData.ipdLine2,
         ipdLine3: formData.ipdLine3,
         ipdLine4: formData.ipdLine4,
         ipdLine5: formData.ipdLine5,
+
+        // Application date
         applicationDate: backendDate, // YYYY-MM-DD format for backend
 
-        // Required GRK fields for validation (use proper values)
-        addressLine2: '',
-        city: formData.ipdLine4 || 'Johor', // Use IPD state as city fallback
-        postcode: formData.ipdLine3?.match(/\d{5}/)?.[0] || '80000', // Extract postcode from ipdLine3
-        state: formData.ipdLine4 || 'Johor',
-        companySsm: '202300000000', // Dummy SSM for validation
-        businessLocation: formData.businessAddressLine1 || 'Tapak Perniagaan',
-        businessAddress1: formData.businessAddressLine1 || 'Tapak Perniagaan',
-        businessAddress2: '',
-        businessState: formData.ipdLine4 || 'Johor',
-        ipd: formData.ipdLine1, // Use IPD name
-        countryCode: formData.countryCode,
+        // Festival type
+        festivalType: formData.festivalType,
       };
 
-      // Call BMFireworks dedicated PDF service (port 4001)
-      const response = await fetch('http://84.247.150.90:4001/api/pdf-orders', {
+      // Determine templates based on festival type
+      const templates = formData.festivalType === 'raya-2026'
+        ? [
+            'bmfireworks-borang-ipd',
+            'bmfireworks-surat-lantikan-raya',
+            'bmfireworks-borang-c',
+            'bmfireworks-borang-e',
+            'bmfireworks-lampiran-a',
+            'bmfireworks-surat-kdn',
+            'bmfireworks-borang-a',
+            'bmfireworks-borang-a-2',
+            'bmfireworks-lampiran-a-3',
+            'bmfireworks-lampiran-a-4',
+            'amflex-surat-lantikan-raya',
+            'amflex-borang-c',
+            'amflex-borang-e',
+            'amflex-lampiran-a',
+            'amflex-borang-a',
+            'amflex-lampiran-a-1',
+            'amflex-lampiran-a2',
+            'amflex-lampiran-a3'
+          ]
+        : [
+            'bmfireworks-borang-ipd',
+            'bmfireworks-surat-lantikan-cny',
+            'bmfireworks-borang-c',
+            'bmfireworks-borang-e',
+            'bmfireworks-lampiran-a',
+            'bmfireworks-surat-kdn',
+            'bmfireworks-borang-a',
+            'bmfireworks-borang-a-2',
+            'bmfireworks-lampiran-a-3',
+            'bmfireworks-lampiran-a-4',
+            'amflex-surat-lantikan-cny',
+            'amflex-borang-c',
+            'amflex-borang-e',
+            'amflex-lampiran-a',
+            'amflex-borang-a',
+            'amflex-lampiran-a-1',
+            'amflex-lampiran-a2',
+            'amflex-lampiran-a3'
+          ];
+
+      // Call PDF service via PHP proxy
+      const response = await fetch(PDF_SERVICE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Key': 'bmf_prod_7UWZO8xLyEPLjj5+VPT2KuuS4vWi247VVzfvvfHvqIc=',
         },
         body: JSON.stringify({
           ...payload,
-          templates: ['bmfireworks-surat-lantikan-cny', 'bmfireworks-borang-ipd'],
+          templates,
         }),
       });
 
@@ -250,6 +423,7 @@ const PermitPDRM = () => {
 
       // Reset form
       setFormData({
+        festivalType: '',
         fullName: '',
         icNumber: '',
         occupation: '',
@@ -258,7 +432,8 @@ const PermitPDRM = () => {
         addressLine1: '',
         addressLine2: '',
         addressLine3: '',
-        companyName: 'BM FIREWORKS SDN. BHD.',
+        companyName: '',
+        businessState: '',
         businessAddressLine1: '',
         businessAddressLine2: '',
         businessAddressLine3: '',
@@ -322,6 +497,42 @@ const PermitPDRM = () => {
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <div className="space-y-10">
 
+              {/* Festival Type Selection */}
+              <section className="space-y-4">
+                <div className="rounded-lg border-2 border-amber-300 bg-amber-50 p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h2 className="text-2xl font-semibold text-amber-900">Jenis Perayaan *</h2>
+                      <p className="text-sm text-slate-600 mt-1">
+                        Pilih jenis perayaan untuk surat lantikan yang sesuai
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="festivalType" className="text-base font-medium">
+                        Permohonan untuk Perayaan
+                      </Label>
+                      <select
+                        id="festivalType"
+                        value={formData.festivalType}
+                        onChange={(e) => handleInputChange('festivalType', e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-amber-300 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+                      >
+                        <option value="">-- Sila Pilih Jenis Perayaan --</option>
+                        <option value="raya-2026">Hari Raya Aidilfitri 2026</option>
+                        <option value="cny-2026">Tahun Baru Cina (CNY) 2026</option>
+                      </select>
+                      {formData.festivalType && (
+                        <p className="text-xs text-green-700 font-medium mt-2">
+                          ✓ {formData.festivalType === 'raya-2026'
+                            ? 'Surat lantikan untuk Hari Raya Aidilfitri 2026'
+                            : 'Surat lantikan untuk Tahun Baru Cina 2026'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </section>
+
               {/* Personal Info Section */}
               <section className="space-y-6">
                 <div>
@@ -338,6 +549,7 @@ const PermitPDRM = () => {
                       placeholder="contoh: Ahmad bin Ali"
                       value={formData.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
+                      className={cn(errors.fullName && "border-red-500 focus-visible:ring-red-500")}
                     />
                   </div>
                   <div className="space-y-2">
@@ -347,6 +559,7 @@ const PermitPDRM = () => {
                       placeholder="900101-14-1234"
                       value={formData.icNumber}
                       onChange={(e) => handleInputChange('icNumber', e.target.value)}
+                      className={cn(errors.icNumber && "border-red-500 focus-visible:ring-red-500")}
                     />
                   </div>
                   <div className="space-y-2">
@@ -356,6 +569,7 @@ const PermitPDRM = () => {
                       placeholder="contoh: Usahawan"
                       value={formData.occupation}
                       onChange={(e) => handleInputChange('occupation', e.target.value)}
+                      className={cn(errors.occupation && "border-red-500 focus-visible:ring-red-500")}
                     />
                   </div>
                   <div className="grid gap-3 md:grid-cols-[140px_minmax(0,1fr)]">
@@ -384,6 +598,7 @@ const PermitPDRM = () => {
                         placeholder="0123456789 (tanpa +60)"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
+                        className={cn(errors.phone && "border-red-500 focus-visible:ring-red-500")}
                       />
                       <p className="text-sm text-slate-600">
                         Taip nombor tanpa kod negara. Sistem akan simpan sebagai 60XXXXXXXXX.
@@ -411,6 +626,7 @@ const PermitPDRM = () => {
                       placeholder="No 12, Jalan Bunga Api"
                       value={formData.addressLine1}
                       onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                      className={cn(errors.addressLine1 && "border-red-500 focus-visible:ring-red-500")}
                     />
                   </div>
                   <div className="space-y-2">
@@ -442,22 +658,22 @@ const PermitPDRM = () => {
               {/* Company Info Section */}
               <section className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-amber-900">Maklumat Syarikat</h2>
+                  <h2 className="text-2xl font-semibold text-amber-900">Maklumat Syarikat Pemohon</h2>
                   <p className="text-sm text-slate-600">
-                    Nama syarikat pembekal mercun (auto diisi untuk BM Fireworks).
+                    Nama syarikat anda yang akan membeli/menjual mercun.
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyName">Nama Syarikat Pembekal *</Label>
-                  <Input
-                    id="companyName"
-                    value={formData.companyName}
-                    disabled
-                    className="bg-slate-100"
-                  />
-                  <p className="text-sm text-slate-600">
-                    Syarikat pembekal telah ditetapkan sebagai BM FIREWORKS SDN. BHD.
-                  </p>
+                <div className="grid gap-6">
+                  <div className="space-y-2 max-w-md">
+                    <Label htmlFor="companyName">Nama Syarikat *</Label>
+                    <Input
+                      id="companyName"
+                      placeholder="contoh: KEDAI RUNCIT ALI SDN BHD"
+                      value={formData.companyName}
+                      onChange={(e) => handleInputChange('companyName', e.target.value)}
+                      className={cn(errors.companyName && "border-red-500 focus-visible:ring-red-500")}
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2 max-w-sm">
                   <Label>Tarikh Permohonan *</Label>
@@ -495,12 +711,33 @@ const PermitPDRM = () => {
               {/* Business Address Section */}
               <section className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-amber-900">Alamat Premis Perniagaan</h2>
+                  <h2 className="text-2xl font-semibold text-amber-900">Alamat Syarikat / Premis Perniagaan</h2>
                   <p className="text-sm text-slate-600">
-                    Alamat tapak/gerai yang akan digunakan untuk berniaga mercun.
+                    Alamat syarikat/tapak/gerai yang akan digunakan untuk berniaga mercun.
                   </p>
                 </div>
                 <div className="grid gap-6">
+                  <div className="space-y-2 max-w-md">
+                    <Label htmlFor="businessState">Negeri Premis Perniagaan *</Label>
+                    <Select
+                      value={formData.businessState}
+                      onValueChange={handleStateSelect}
+                    >
+                      <SelectTrigger id="businessState" className={cn(errors.businessState && "border-red-500 focus:ring-red-500")}>
+                        <SelectValue placeholder="Pilih Negeri" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from(new Set(ipdList.map(ipd => ipd.state))).sort().map((state) => (
+                          <SelectItem key={state} value={state}>
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-slate-600">
+                      Pilih negeri premis perniagaan untuk menapis senarai IPD.
+                    </p>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="businessAddressLine1">Alamat Premis (Baris 1) *</Label>
                     <Input
@@ -508,6 +745,7 @@ const PermitPDRM = () => {
                       placeholder="No Lot/Gerai, Nama Tapak"
                       value={formData.businessAddressLine1}
                       onChange={(e) => handleInputChange('businessAddressLine1', e.target.value)}
+                      className={cn(errors.businessAddressLine1 && "border-red-500 focus-visible:ring-red-500")}
                     />
                   </div>
                   <div className="space-y-2">
@@ -550,20 +788,30 @@ const PermitPDRM = () => {
                     <Select
                       value={formData.selectedIpdId}
                       onValueChange={handleIpdSelect}
+                      disabled={!formData.businessState}
                     >
-                      <SelectTrigger id="selectedIpd">
-                        <SelectValue placeholder="Pilih IPD dari senarai" />
+                      <SelectTrigger id="selectedIpd" className={cn(errors.selectedIpdId && "border-red-500 focus:ring-red-500")}>
+                        <SelectValue placeholder={formData.businessState ? "Pilih IPD dari senarai" : "Sila pilih Negeri dahulu"} />
                       </SelectTrigger>
                       <SelectContent className="max-h-[300px]">
-                        {ipdList.map((ipd, index) => (
-                          <SelectItem key={index} value={index.toString()}>
-                            {ipd.name} - {ipd.city}, {ipd.state}
-                          </SelectItem>
-                        ))}
+                        {filteredIpdList.map((ipd, index) => {
+                          // Need to get original index from full ipdList
+                          const originalIndex = ipdList.findIndex(
+                            item => item.name === ipd.name && item.state === ipd.state
+                          );
+                          return (
+                            <SelectItem key={originalIndex} value={originalIndex.toString()}>
+                              {ipd.name} - {ipd.city}, {ipd.state}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                     <p className="text-sm text-slate-600">
-                      Pilih dari senarai {ipdList.length} IPD di Semenanjung Malaysia. Maklumat akan auto diisi.
+                      {formData.businessState
+                        ? `${filteredIpdList.length} IPD di ${formData.businessState}. Maklumat akan auto diisi.`
+                        : `Pilih negeri premis perniagaan terlebih dahulu.`
+                      }
                     </p>
                   </div>
 
